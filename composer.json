@@ -1,0 +1,31 @@
+{
+    "name": "codesaur/http-client",
+    "description": "An elegant object-oriented application development framework component for PHP 7.2 or newer",
+    "keywords": [
+        "http", "client", "mail", "smtp",
+        "mongol", "mongolia", "mongolian", "монгол",
+        "codesaur", "narankhuu", "coden", "кодзавр", "наранхүү", "коден",
+        "ololt", "ололт", "мөнхийн", "мөнхийн-ололт", "мөнхийн ололт", "munkhiin ololt"
+    ],
+    "homepage": "https://ololt.mn/codesaur",
+    "authors": [
+        {
+            "name": "Narankhuu",
+            "email": "codesaur@gmail.com",
+            "homepage": "https://ololt.mn/narankhuu"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0",
+        "ext-curl": "*",
+        "ext-json": "*",
+        "phpmailer/phpmailer": ">=6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "codesaur\\Http\\Client\\": "src/"
+        }
+    },
+    "license": "MIT",
+    "minimum-stability": "dev"
+}
