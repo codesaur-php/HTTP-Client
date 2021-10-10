@@ -52,7 +52,7 @@ class Mail
             $from, $from_name, $to, $to_name,
             $subject, $message, $charset,
             $host, $port, $username, $password,
-            $is_smtp = true, $smtp_auth = true, $smtp_secure = true,
+            $is_smtp = true, $smtp_auth = true, $smtp_secure = 'ssl',
             $smtp_options = array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true))
     ) {
         $exceptions = defined('CODESAUR_DEVELOPMENT') && CODESAUR_DEVELOPMENT ? true : null;                    
@@ -71,7 +71,6 @@ class Mail
         $mailer->SetFrom($from, $from_name);
         $mailer->AddReplyTo($from, $from_name);
         $mailer->SMTPOptions = $smtp_options;
-
         $mailer->MsgHTML($message);
         $mailer->Subject = $subject;
         $mailer->AddAddress($to, $to_name);
