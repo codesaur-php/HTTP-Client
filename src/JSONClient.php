@@ -38,8 +38,8 @@ class JSONClient extends Client
             );
             
             return json_decode(parent::request($uri, $method, $data, $options), true);
-        } catch (Throwable $th) {
-            return array('error' => array('code' => $th->getCode(), 'message' => $th->getMessage()));
+        } catch (Throwable $e) {
+            return array('error' => array('code' => $e->getCode(), 'message' => $e->getMessage()));
         }
     }
 }
