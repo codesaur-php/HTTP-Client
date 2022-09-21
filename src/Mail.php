@@ -49,11 +49,11 @@ class Mail
     }
     
     public function sendSMTP(
-            $from, $from_name, $to, $to_name,
-            $subject, $message, $charset,
-            $host, $port, $username, $password,
-            $is_smtp = true, $smtp_auth = true, $smtp_secure = 'ssl',
-            $smtp_options = array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true))
+        $from, $from_name, $to, $to_name,
+        $subject, $message, $charset,
+        $host, $port, $username, $password,
+        $is_smtp = true, $smtp_auth = true, $smtp_secure = 'ssl',
+        $smtp_options = array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true))
     ) {
         $exceptions = defined('CODESAUR_DEVELOPMENT') && CODESAUR_DEVELOPMENT ? true : null;                    
         $mailer = new PHPMailer($exceptions);
