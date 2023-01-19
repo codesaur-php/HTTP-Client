@@ -2,44 +2,42 @@
 
 namespace codesaur\Http\Client;
 
-use Throwable;
-
 class JSONClient extends Client
 {
-    public function get(string $uri, $payload = null, $headers = array())
+    public function get(string $uri, array $payload = [], array $headers = []): array
     {
         return $this->request($uri, 'GET', $payload, $headers);
     }
     
-    public function post(string $uri, $payload, $headers = array())
+    public function post(string $uri, array $payload, array $headers = []): array
     {
         return $this->request($uri, 'POST', $payload, $headers);
     }
 
-    public function request(string $uri, $method, $payload, array $headers)
+    public function request(string $uri, string $method, array $payload, array $headers): array
     {
         try {
-            $header = array('Content-Type: application/json');
+            $header = ['Content-Type: application/json'];
             
-            if (isset($payload)) {
-                $data = json_encode($payload);
-            } else {
+            if (empty($payload)) {
                 $data = $method != 'GET' ? '{}' : '';
+            } else {
+                $data = json_encode($payload);
             }
             
             foreach ($headers as $index => $field) {
                 $header[] = "$index: $field";
             }
             
-            $options = array(
-                CURLOPT_SSL_VERIFYHOST => false,
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_HTTPHEADER     => $header
-            );
+            $options = [
+                \CURLOPT_SSL_VERIFYHOST => false,
+                \CURLOPT_SSL_VERIFYPEER => false,
+                \CURLOPT_HTTPHEADER     => $header
+            ];
             
             return json_decode(parent::request($uri, $method, $data, $options), true);
-        } catch (Throwable $e) {
-            return array('error' => array('code' => $e->getCode(), 'message' => $e->getMessage()));
+        } catch (\Throwable $th) {
+            return ['error' => ['code' => $th->getCode(), 'message' => $th->getMessage()]];
         }
     }
 }

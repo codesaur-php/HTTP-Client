@@ -2,31 +2,29 @@
 
 namespace codesaur\Http\Client;
 
-use Exception;
-
 use PHPMailer\PHPMailer\PHPMailer;
 
 class Mail
 {
-    public function send($from, $to, $subject, $message)
+    public function send(string|array $from, string|array $to, string $subject, string $message): true
     {
-        if (!isset($from)) {
-            throw new Exception('Mail sender must be set!');
+        if (empty($from)) {
+            throw new \InvalidArgumentException('Mail sender must be set!');
         } elseif (is_array($from)) {
             $sender = '=?UTF-8?B?' . base64_encode($from[0]) . '?= <' . $from[1] . '>';
         }
   
-        if (!isset($to)) {
-            throw new Exception('Mail recipient must be set!');
+        if (empty($to)) {
+            throw new \InvalidArgumentException('Mail recipient must be set!');
         } elseif (is_array($to)) {
             $recipient = '=?UTF-8?B?' . base64_encode($to[0]) . '?= <' . $to[1] . '>';
         }
         
         if (empty($subject) || empty($message)) {
-            throw new Exception('No content? Are u kidding? Mail message must be set!');
+            throw new \InvalidArgumentException('No content? Are u kidding? Mail message must be set!');
         }
         
-        $content_type = strpos($message, '</') === false ? 'text/plain' : 'text/html';
+        $content_type = str_contains($message, '</') ? 'text/html' : 'text/plain';
         
         $subject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
         
@@ -45,16 +43,17 @@ class Mail
             return true;
         }
         
-        throw new Exception(error_get_last()['message'] ?? 'Email not sent!');
+        throw new \Exception(error_get_last()['message'] ?? 'Email not sent!');
     }
     
     public function sendSMTP(
-        $from, $from_name, $to, $to_name,
-        $subject, $message, $charset,
-        $host, $port, $username, $password,
-        $is_smtp = true, $smtp_auth = true, $smtp_secure = 'ssl',
-        $smtp_options = array('ssl' => array('verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true))
-    ) {
+        string $from, string $from_name,
+        string $to, string $to_name,
+        string $subject, string $message, string $charset,
+        string $host, int $port, string $username, string $password,
+        bool $is_smtp = true, bool $smtp_auth = true, string $smtp_secure = 'ssl',
+        array $smtp_options = ['ssl' => ['verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true]]
+    ): bool {
         $exceptions = defined('CODESAUR_DEVELOPMENT') && CODESAUR_DEVELOPMENT ? true : null;                    
         $mailer = new PHPMailer($exceptions);
         if ($is_smtp) {
@@ -73,7 +72,7 @@ class Mail
         $mailer->SMTPOptions = $smtp_options;
         $mailer->MsgHTML($message);
         $mailer->Subject = $subject;
-        $mailer->AddAddress($to, $to_name);
+        $mailer->AddAddress($to, $to_name);        
         return $mailer->Send();
     }
 }

@@ -12,4 +12,4 @@ require_once '../vendor/autoload.php';
 use codesaur\Http\Client\Client;
 
 $client = new Client();
-echo $client->request('www.google.com/', 'GET', '', array());
+echo $client->request('www.google.com/');
