@@ -72,7 +72,7 @@ class Mail
         $mailer->SMTPOptions = $smtp_options;
         $mailer->MsgHTML($message);
         $mailer->Subject = $subject;
-        $mailer->AddAddress($to, $to_name);        
+        $mailer->AddAddress($to, $to_name);
         return $mailer->Send();
     }
 }
