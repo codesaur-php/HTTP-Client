@@ -8,11 +8,11 @@ namespace codesaur\Http\Client\Example;
  */
 
 ini_set('display_errors', 'On');
-error_reporting(\E_ALL & ~\E_STRICT & ~\E_NOTICE);
+error_reporting(\E_ALL);
 
 require_once '../vendor/autoload.php';
 
 use codesaur\Http\Client\Client;
 
 $client = new Client();
-echo $client->request('www.google.com/');
+echo $client->request('www.google.com');
