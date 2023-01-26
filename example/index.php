@@ -12,7 +12,9 @@ error_reporting(\E_ALL);
 
 require_once '../vendor/autoload.php';
 
-use codesaur\Http\Client\Client;
+header('Content-Type: application/json');
 
-$client = new Client();
-echo $client->request('www.google.com');
+use codesaur\Http\Client\JSONClient;
+
+$client = new JSONClient();
+echo json_encode($client->get('http://echo.jsontest.com/it\'s/a/wonderful/life'));
