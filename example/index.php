@@ -17,4 +17,4 @@ header('Content-Type: application/json');
 use codesaur\Http\Client\JSONClient;
 
 $client = new JSONClient();
-echo json_encode($client->get('http://echo.jsontest.com/it\'s/a/wonderful/life')) ?: '{"error":"Can\'t process request!"}';
+echo json_encode($client->get('http://echo.jsontest.com/it\'s/a/wonderful/life')) ?: '{"error":"Can\'t encode response!"}';
