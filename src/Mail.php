@@ -16,7 +16,7 @@ class Mail
   
         if (empty($to)) {
             throw new \InvalidArgumentException('Mail recipient must be set!');
-        } elseif (is_array($to)) {
+        } elseif (\is_array($to)) {
             $recipient = '=?UTF-8?B?' . \base64_encode($to[0]) . '?= <' . $to[1] . '>';
         }
         

@@ -23,7 +23,7 @@ class JSONClient
     {
         return $this->request($uri, 'DELETE', $payload, $headers);
     }
-
+    
     public function request(string $uri, string $method, array $payload, array $headers): array
     {
         try {
@@ -45,8 +45,8 @@ class JSONClient
             return \json_decode(
                 (new Client())->request($uri, $method, $data, $options), true)
                 ?? throw new \Exception(__CLASS__ . ": [$uri] Response json cannot be decoded!");
-        } catch (\Throwable $th) {
-            return ['error' => ['code' => $th->getCode(), 'message' => $th->getMessage()]];
+        } catch (\Throwable $e) {
+            return ['error' => ['code' => $e->getCode(), 'message' => $e->getMessage()]];
         }
     }
 }
