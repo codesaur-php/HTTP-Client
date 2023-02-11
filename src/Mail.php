@@ -51,10 +51,21 @@ class Mail
         string $to, string $to_name,
         string $subject, string $message, string $charset,
         string $host, int $port, string $username, string $password,
-        bool $is_smtp = true, bool $smtp_auth = true, string $smtp_secure = 'ssl',
-        array $smtp_options = ['ssl' => ['verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true]]
+        bool $is_smtp = true, bool $smtp_auth = true, string $smtp_secure = 'ssl', ?array $smtp_options = null,
+        ?string $lang_code = null
     ): bool {
         $exceptions = \defined('CODESAUR_DEVELOPMENT') && CODESAUR_DEVELOPMENT ? true : null;
+        
+        if (empty($smtp_options)) {
+            $smtp_options = [
+                'ssl' => [
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                ]
+            ];
+        }
+        
         $mailer = new PHPMailer($exceptions);
         if ($is_smtp) {
             $mailer->IsSMTP();
@@ -73,6 +84,11 @@ class Mail
         $mailer->MsgHTML($message);
         $mailer->Subject = $subject;
         $mailer->AddAddress($to, $to_name);
+        
+        if (!empty($lang_code)) {
+            $mailer->setLanguage($lang_code);
+        }
+        
         return $mailer->Send();
     }
 }
