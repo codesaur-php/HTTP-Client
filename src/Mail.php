@@ -6,7 +6,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 class Mail
 {
-    public function send(string|array $from, string|array $to, string $subject, string $message): true
+    public function send(string|array $from, string|array $to, string $subject, string $message): bool
     {
         if (empty($from)) {
             throw new \InvalidArgumentException('Mail sender must be set!');
