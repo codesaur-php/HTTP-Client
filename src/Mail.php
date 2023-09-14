@@ -17,15 +17,7 @@ class Mail
     protected array $attachments;
     
     protected string $languageCode = '';
-
-    public function __construct(
-        string $recipient,
-        string $recipientName = ''
-    )
-    {
-        $this->targetTo($recipient, $recipientName);
-    }
-
+    
     public function targetTo(string $email, string $name = '')
     {
         $this->recipients = [];
