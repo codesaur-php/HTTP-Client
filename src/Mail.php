@@ -116,7 +116,7 @@ class Mail
         } elseif (isset($attachment['url'])
             && !empty($attachment['url'])
         ) {
-            $this->addUriAttachment($attachment['url'], $attachment['name'] ?? '');
+            $this->addUrlAttachment($attachment['url'], $attachment['name'] ?? '');
         } elseif (
             isset($attachment['content'])
             && !empty($attachment['content'])
