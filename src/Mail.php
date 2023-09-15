@@ -4,7 +4,7 @@ namespace codesaur\Http\Client;
 
 class Mail
 {
-    protected array $recipients;
+    private array $_recipients;
     
     protected string $from;
     protected string $fromName = '';
@@ -14,13 +14,14 @@ class Mail
     
     protected string $subject;
     protected string $message;
-    protected array $attachments;
+    
+    private array $_attachments;
     
     protected string $languageCode = '';
     
     public function targetTo(string $email, string $name = '')
     {
-        $this->recipients = [];
+        $this->_recipients = [];
 
         $this->addRecipient($email, $name);
     }
@@ -46,29 +47,29 @@ class Mail
             throw new \InvalidArgumentException("Invalid email address for a recipient [$email]! ");
         }
 
-        if (!isset($this->recipients)
-            || !\is_array($this->recipients)
+        if (!isset($this->_recipients)
+            || !\is_array($this->_recipients)
         ) {
-            $this->recipients = [];
+            $this->_recipients = [];
         }
-        if (!isset($this->recipients[$type])
-            || !\is_array($this->recipients[$type])
+        if (!isset($this->_recipients[$type])
+            || !\is_array($this->_recipients[$type])
         ) {
-            $this->recipients[$type] = [];
+            $this->_recipients[$type] = [];
         }
 
-        $this->recipients[$type][] = ['name' => \str_replace(',', '', $name), 'email' => $email];
+        $this->_recipients[$type][] = ['name' => \str_replace(',', '', $name), 'email' => $email];
     }
 
     public function getRecipients(string $type): array
     {
-        if (!isset($this->recipients[$type])
-            || !\is_array($this->recipients[$type])
+        if (!isset($this->_recipients[$type])
+            || !\is_array($this->_recipients[$type])
         ) {
             return [];
         }
 
-        return $this->recipients[$type];
+        return $this->_recipients[$type];
     }
 
     public function setSubject(string $subject)
@@ -108,17 +109,21 @@ class Mail
 
     public function addAttachment(array $attachment)
     {
-        if (isset($attachment['file_path'])
-            && !empty($attachment['file_path'])
+        if (isset($attachment['path'])
+            && !empty($attachment['path'])
         ) {
-            $this->addFileAttachment($attachment['file_path'], $attachment['file_name'] ?? '');
+            $this->addFileAttachment($attachment['path'], $attachment['name'] ?? '');
+        } elseif (isset($attachment['url'])
+            && !empty($attachment['url'])
+        ) {
+            $this->addUriAttachment($attachment['url'], $attachment['name'] ?? '');
         } elseif (
-            isset($attachment['file_content'])
-            && !empty($attachment['file_content'])
-            && isset($attachment['file_name'])
-            && !empty($attachment['file_name'])
+            isset($attachment['content'])
+            && !empty($attachment['content'])
+            && isset($attachment['name'])
+            && !empty($attachment['name'])
         ) {
-            $this->addContentAttachment($attachment['file_content'], $attachment['file_name']);
+            $this->addContentAttachment($attachment['content'], $attachment['name']);
         } else {
             throw new \InvalidArgumentException('Invalid attachment!');
         }
@@ -126,27 +131,55 @@ class Mail
 
     public function addFileAttachment(string $filePath, string $fileName = '')
     {
-        $this->appendAttachment(['file_path' => $filePath, 'file_name' => $fileName]);
+        if (!\is_file($filePath)) {
+            throw new \InvalidArgumentException('Invalid file attachment!');
+        }
+        if (empty($fileName)) {
+            $fileName = \basename($filePath);
+        }
+        $this->appendAttachment(['path' => $filePath, 'name' => $fileName]);
+    }
+    
+    public function addUrlAttachment(string $fileUrl, string $fileName = '')
+    {
+        $headers = \get_headers($fileUrl);
+        if (\stripos($headers[0], '200 OK') === false) {
+            throw new \InvalidArgumentException('Invalid URL attachment!');
+        }
+        if (empty($fileName)) {
+            $path = \parse_url($url, \PHP_URL_PATH);
+            $fileName = \basename($path);
+        }
+        $this->appendAttachment(['url' => $fileUrl, 'name' => $fileName]);
     }
 
     public function addContentAttachment(string $fileContent, string $fileName)
     {
-        $this->appendAttachment(['file_content' => $fileContent, 'file_name' => $fileName]);
+        if (empty($fileContent) || empty($fileName)) {
+            throw new \InvalidArgumentException('Empty attachment content!');
+        }
+        $this->appendAttachment(['content' => $fileContent, 'name' => $fileName]);
     }
 
     private function appendAttachment(array $attachment)
     {
-        if (!isset($this->attachments) || !\is_array($this->attachments)
+        if (!isset($this->_attachments)
+            || !\is_array($this->_attachments)
         ) {
-            $this->attachments = [];
+            $this->clearAttachments();
         }
 
-        $this->attachments[] = $attachment;
+        $this->_attachments[] = $attachment;
     }
 
     public function clearAttachments()
     {
-        $this->attachments = [];
+        $this->_attachments = [];
+    }
+    
+    public function getAttachments(): array
+    {
+        return $this->_attachments ?? [];
     }
 
     private function getAddressLine(array $address): string
@@ -205,42 +238,35 @@ class Mail
 
         $headers = 'MIME-Version: 1.0' . "\r\n";
         
-        $is_attachment = !empty($this->attachments) && \is_array($this->attachments);
-        if ($is_attachment) {
+        $attachments = $this->getAttachments();
+        $is_attached = !empty($attachments);
+        if ($is_attached) {
             $semi_rand = \md5(\time());
             $mime_boundary = "==Multipart_Boundary_x{$semi_rand}x";
             $headers .= 'Content-Type: multipart/mixed;\n' . " boundary=\"{$mime_boundary}\"";
             $message = "--{$mime_boundary}\n" . 'Content-Type: ' . $content_type . '; charset=UTF-8' . "\r\n" .
                 "Content-Transfer-Encoding: base64\n\n" . $this->message . "\n\n";
-            foreach ($this->attachments as $attachment) {
-                if (isset($attachment['file_path']) && !empty($attachment['file_path'])) {
-                    if (!\is_file($attachment['file_path'])) {
-                        continue;
-                    }
-                    $file_name =
-                        isset($attachment['file_name']) && !empty($attachment['file_name'])
-                        ? $attachment['file_name'] : \basename($attachment['file_path']);
-                    $file_size = \filesize($attachment['file_path']);
-                    $fp = \fopen($attachment['file_path'], 'rb');
-                    $data = \fread($fp, $file_size);
+            foreach ($attachments as $attachment) {
+                $name = $attachment['name'];
+                if (isset($attachment['path'])) {
+                    $size = \filesize($attachment['path']);
+                    $fp = \fopen($attachment['path'], 'rb');
+                    $data = \fread($fp, $size);
                     \fclose($fp);
-                } elseif (
-                    isset($attachment['file_content'])
-                    && !empty($attachment['file_content'])
-                    && isset($attachment['file_name'])
-                    && !empty($attachment['file_name'])
-                ) {
-                    $file_name = $attachment['file_name'];
-                    $data = $attachment['file_content'];
-                    $file_size = \strlen($attachment['file_content']);
+                } if (isset($attachment['url'])) {
+                    $data = \file_get_contents($attachment['url']);
+                    $size = \strlen($data);
+                } elseif (isset($attachment['content'])) {
+                    $data = $attachment['content'];
+                    $size = \strlen($data);
                 } else {
                     continue;
                 }
                 $message .= "--{$mime_boundary}\n";
                 $data = \chunk_split(\base64_encode($data));
-                $message .= "Content-Type: application/octet-stream; name=\"" . $file_name . "\"\n" .
-                    "Content-Description: " . $file_name . "\n" .
-                    "Content-Disposition: attachment;\n" . " filename=\"" . $file_name . "\"; size=" . $file_size . ";\n" .
+                $message .= "Content-Type: application/octet-stream; name=\"" . $name . "\"\n" .
+                    "Content-Description: " . $name . "\n" .
+                    "Content-Disposition: attachment;\n" . " filename=\"" . $name . "\"; size=" . $size . ";\n" .
                     "Content-Transfer-Encoding: base64\n\n" . $data . "\n\n";
             }
             $message .= "--{$mime_boundary}--";
@@ -267,80 +293,5 @@ class Mail
         }
 
         throw new \RuntimeException(\error_get_last()['message'] ?? 'Email not sent!');
-    }
-
-    public function sendSMTP(
-        string $host, int $port,
-        string $username, string $password,
-        string $smtp_secure = 'ssl', ?array $smtp_options = null
-    ): bool
-    {
-        $this->assertValues();
-
-        $exceptions = \defined('CODESAUR_DEVELOPMENT') && CODESAUR_DEVELOPMENT ? true : null;
-
-        if (empty($smtp_options)) {
-            $smtp_options = [
-                'ssl' => [
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                ]
-            ];
-        }
-
-        $mailer = new \PHPMailer\PHPMailer\PHPMailer($exceptions);
-        $mailer->isSMTP();
-        $mailer->CharSet = 'UTF-8';
-        $mailer->SMTPAuth = true;
-        $mailer->SMTPSecure = $smtp_secure;
-        $mailer->Host = $host;
-        $mailer->Port = $port;
-        $mailer->Username = $username;
-        $mailer->Password = $password;
-        $mailer->setFrom($this->from, $this->fromName);
-        if (empty($this->replyTo)) {
-            $replyTo = $this->from;
-            $replyToName = $this->fromName;
-        } else {
-            $replyTo = $this->replyTo;
-            $replyToName = $this->replyToName;
-        }
-        $mailer->addReplyTo($replyTo, $replyToName);
-        $mailer->SMTPOptions = $smtp_options;
-        $mailer->msgHTML($this->message);
-        $mailer->Subject = $this->subject;
-        foreach ($this->getRecipients('To') as $to) {
-            $mailer->addAddress($to['email'], $to['name'] ?? '');
-        }
-        foreach ($this->getRecipients('Cc') as $cc) {
-            $mailer->addCC($cc['email'], $cc['name'] ?? '');
-        }
-        foreach ($this->getRecipients('Bcc') as $bcc) {
-            $mailer->addBCC($bcc['email'], $bcc['name'] ?? '');
-        }
-
-        if (!empty($this->attachments) && \is_array($this->attachments)) {
-            foreach ($this->attachments as $attachment) {
-                if (isset($attachment['file_path'])
-                    && !empty($attachment['file_path'])
-                ) {
-                    $mailer->addAttachment($attachment['file_path'], $attachment['file_name'] ?? '');
-                } elseif (
-                    isset($attachment['file_content'])
-                    && !empty($attachment['file_content'])
-                    && isset($attachment['file_name'])
-                    && !empty($attachment['file_name'])
-                ) {
-                    $mailer->addStringAttachment($attachment['file_content'], $attachment['file_name']);
-                }
-            }
-        }
-
-        if (!empty($this->languageCode)) {
-            $mailer->setLanguage($this->languageCode);
-        }
-
-        return $mailer->send();
     }
 }
