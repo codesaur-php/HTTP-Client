@@ -221,9 +221,9 @@ class Mail
                         isset($attachment['file_name']) && !empty($attachment['file_name'])
                         ? $attachment['file_name'] : \basename($attachment['file_path']);
                     $file_size = \filesize($attachment['file_path']);
-                    $fp = @fopen($attachment['file_path'], 'rb');
-                    $data = @fread($fp, $file_size);
-                    @fclose($fp);
+                    $fp = @\fopen($attachment['file_path'], 'rb');
+                    $data = @\fread($fp, $file_size);
+                    @\fclose($fp);
                 } elseif (
                     isset($attachment['file_content'])
                     && !empty($attachment['file_content'])
