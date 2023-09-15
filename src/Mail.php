@@ -138,7 +138,7 @@ class Mail
             throw new \InvalidArgumentException('Invalid URL attachment!');
         }
         if (empty($fileName)) {
-            $path = \parse_url($url, \PHP_URL_PATH);
+            $path = \parse_url($fileUrl, \PHP_URL_PATH);
             $fileName = \basename($path);
         }
         $this->appendAttachment(['url' => $fileUrl, 'name' => $fileName]);
