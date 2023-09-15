@@ -57,8 +57,13 @@ class Mail
         ) {
             $this->_recipients[$type] = [];
         }
-
-        $this->_recipients[$type][] = ['name' => \str_replace(',', '', $name), 'email' => $email];
+        
+        $_name = \str_replace(',', '', $name);
+        if (!empty($name)) {
+            $this->_recipients[$type][] = ['name' => $_name, 'email' => $email];
+        } else {
+            $this->_recipients[$type][] = ['email' => $email];
+        }
     }
 
     public function getRecipients(string $type): array
