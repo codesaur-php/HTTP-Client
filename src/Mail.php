@@ -109,20 +109,11 @@ class Mail
 
     public function addAttachment(array $attachment)
     {
-        if (isset($attachment['path'])
-            && !empty($attachment['path'])
-        ) {
+        if (isset($attachment['path']) && !empty($attachment['path'])) {
             $this->addFileAttachment($attachment['path'], $attachment['name'] ?? '');
-        } elseif (isset($attachment['url'])
-            && !empty($attachment['url'])
-        ) {
+        } elseif (isset($attachment['url']) && !empty($attachment['url'])) {
             $this->addUrlAttachment($attachment['url'], $attachment['name'] ?? '');
-        } elseif (
-            isset($attachment['content'])
-            && !empty($attachment['content'])
-            && isset($attachment['name'])
-            && !empty($attachment['name'])
-        ) {
+        } elseif (isset($attachment['content']) && isset($attachment['name'])) {
             $this->addContentAttachment($attachment['content'], $attachment['name']);
         } else {
             throw new \InvalidArgumentException('Invalid attachment!');
