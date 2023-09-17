@@ -225,8 +225,9 @@ class Mail
         foreach ($this->getRecipients('Cc') as $cc) {
             $ccAddresses[] = $this->getAddressLine($cc);
         }
+        $bccAddresses = [];
         foreach ($this->getRecipients('Bcc') as $bcc) {
-            $ccAddresses[] = $this->getAddressLine($bcc);
+            $bccAddresses[] = $this->getAddressLine($bcc);
         }
         $from = $this->getAddressLine(['email' => $this->from, 'name' => $this->fromName]);
         if (isset($this->replyTo) && !empty($this->replyTo)) {
@@ -240,6 +241,9 @@ class Mail
         $headers .= "From: $from\r\n";
         if (!empty($ccAddresses)) {
             $headers .= 'Cc: ' . \implode(",\n\t", $ccAddresses). "\r\n";
+        }
+        if (!empty($bccAddresses)) {
+            $headers .= 'Bcc: ' . \implode(",\n\t", $bccAddresses). "\r\n";
         }
         $headers .= "Reply-To: $replyTo\r\n";
         $headers .= 'X-Mailer: PHP/' . \phpversion() . "\r\n";
