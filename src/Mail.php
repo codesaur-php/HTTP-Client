@@ -4,7 +4,7 @@ namespace codesaur\Http\Client;
 
 class Mail
 {
-    public array $_recipients;
+    private array $_recipients;
     
     protected string $from;
     protected string $fromName = '';
@@ -187,7 +187,7 @@ class Mail
     
     private function getEncodedStr(string $value): string
     {
-        return \preg_match('/^[\p{Latin}\s\d]+$/u', $value) ? $value : '=?utf-8?B?' . \base64_encode($value) . '?=';
+        return !\preg_match('/[^A-Za-z0-9._\-\(\)\[\]]/', $value) ? $value : '=?utf-8?B?' . \base64_encode($value) . '?=';
     }
 
     protected function assertValues()
