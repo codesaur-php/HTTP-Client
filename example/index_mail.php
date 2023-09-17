@@ -56,7 +56,7 @@ Yлэг гvрвэлийн мөрийг өдий хvртэл хадгалсан
 
 $mail->addRecipient('davaajargal@example.com', 'Даваажаргал Хакухо');
 $mail->addCCRecipient('user@example.com', 'Хэрэглэгч');
-$mail->addCCRecipient('unen@example.com', 'Tsedenbal-_[]().jpg');
+$mail->addCCRecipient('unen@example.com', 'Truth');
 $mail->addBCCRecipient('mongol@example.com', 'Mongol Uls');
 
 $mail->send();
