@@ -17,4 +17,5 @@ require_once '../vendor/autoload.php';
 use codesaur\Http\Client\JSONClient;
 
 $client = new JSONClient();
-echo \json_encode($client->get('http://echo.jsontest.com/it\'s/a/wonderful/life')) ?: '{"error":"Can\'t encode response!"}';
+$response = $client->get('http://echo.jsontest.com/it\'s/a/wonderful/life');
+echo \json_encode($response) ?: '{"error":"Can\'t encode response!"}';

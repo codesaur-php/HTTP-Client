@@ -2,7 +2,7 @@
 
 namespace codesaur\Http\Client;
 
-class Client
+class CurlClient
 {
     public function request(string $uri, string $method = 'GET', string $data = '', array $options = []): string
     {

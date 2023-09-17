@@ -43,7 +43,7 @@ class JSONClient
                 (\json_encode($payload) ?: throw new \Exception(__CLASS__ . ': Error encoding request payload!'));
             
             return \json_decode(
-                (new Client())->request($uri, $method, $data, $options), true)
+                (new CurlClient())->request($uri, $method, $data, $options), true)
                 ?? throw new \Exception(__CLASS__ . ": [$uri] Response json cannot be decoded!");
         } catch (\Throwable $e) {
             return ['error' => ['code' => $e->getCode(), 'message' => $e->getMessage()]];
