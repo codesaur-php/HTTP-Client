@@ -187,18 +187,22 @@ class Mail
     
     private function getEncodedStr(string $value): string
     {
-        return !\preg_match('/[^A-Za-z0-9._\-\(\)\[\]]/', $value) ? $value : '=?utf-8?B?' . \base64_encode($value) . '?=';
+        return !\preg_match('/[^A-Za-z0-9._+\-\(\)\[\]]+/', $value) ? $value : '=?utf-8?B?' . \base64_encode($value) . '?=';
     }
 
     protected function assertValues()
     {
         $recipients = $this->getRecipients('To');
-        if (!isset($recipients[0]) || !\is_array($recipients[0]) || empty($recipients[0]['email'])
+        if (!isset($recipients[0])
+            || !\is_array($recipients[0])
+            || empty($recipients[0]['email'])
         ) {
             throw new \InvalidArgumentException('Mail recipient must be set!');
         } elseif (empty($this->from)) {
             throw new \InvalidArgumentException('Mail sender <from> must be set!');
-        } elseif (empty($this->subject) || empty($this->message)
+        } elseif (
+            empty($this->subject)
+            || empty($this->message)
         ) {
             throw new \InvalidArgumentException('No content? Are u kidding? Mail (subject : message) must be set!');
         }
@@ -210,13 +214,21 @@ class Mail
         
         \mb_internal_encoding('UTF-8');
         
-        $content_type = \str_contains($this->message, '</') ? 'text/html' : 'text/plain';
+        if (\str_contains($this->message, '</')) {
+            $content_type = 'text/html';
+            $content_encoding = "Content-Transfer-Encoding: base64\r\n";
+            $chunked_message = \chunk_split(\base64_encode($this->message));
+        } else {
+            $content_type = 'text/plain';
+            $content_encoding = '';
+            $chunked_message = "$this->message\r\n";
+        }
         $encoded_subject = \mb_encode_mimeheader("Subject: $this->subject", 'UTF-8');
         $subject = \substr($encoded_subject, \strlen('Subject: '));
         $attachments = $this->getAttachments();
         $is_attached = !empty($attachments);
         $semi_rand = \md5(\time());
-        $mime_boundary = "Multipart_Boundary_x{$semi_rand}x";        
+        $mime_boundary = "Multipart_Boundary_x{$semi_rand}x";
         $toAddresses = [];
         foreach ($this->getRecipients('To') as $to) {
             $toAddresses[] = $this->getAddressLine($to);
@@ -247,51 +259,47 @@ class Mail
         }
         $headers .= "Reply-To: $replyTo\r\n";
         $headers .= 'X-Mailer: PHP/' . \phpversion() . "\r\n";
-        if ($is_attached) {
-            $headers .= "Content-Type: multipart/mixed;\n\tboundary=\"$mime_boundary\"" . "\r\n";
+        
+        if (!$is_attached) {
+            $headers .= $content_encoding;
+            $headers .= "Content-Type: $content_type; charset=\"utf-8\"";
+            $message = $chunked_message;
+        } else {
+            $headers .= "Content-Type: multipart/mixed;\n\tboundary=\"$mime_boundary\"";
             $message = "--$mime_boundary\r\n";
-        } else {
-            $message = "";
-        }
-        
-        $message .= "Content-Type: $content_type; charset=\"utf-8\"\r\n";
-        if ($content_type == 'text/html') {
-            $message .= "Content-Transfer-Encoding: base64\r\n";
-            $message .= "\r\n" . \chunk_split(\base64_encode($this->message)) . "\r\n";
-        } else {
-            $message .= "\r\n" . \chunk_split($this->message) . "\r\n";
-        }        
-        foreach ($attachments as $attachment) {
-            $message .= "--$mime_boundary\r\n";
-            $name = $this->getEncodedStr($attachment['name']);
-            if (isset($attachment['path'])) {
-                $type = \mime_content_type($attachment['path']);
-                $size = \filesize($attachment['path']);
-                $fp = \fopen($attachment['path'], 'rb');
-                $data = \fread($fp, $size);
-                \fclose($fp);
-            } elseif (isset($attachment['url'])) {
-                $data = \file_get_contents($attachment['url']);
-                $finfo = new \finfo(\FILEINFO_MIME_TYPE);
-                $type = $finfo->buffer($data);
-            } elseif (isset($attachment['content'])) {
-                $data = $attachment['content'];
-                $finfo = new \finfo(\FILEINFO_MIME_TYPE);
-                $type = $finfo->buffer($data);
-            } else {
-                continue;
+            $message .= $content_encoding;
+            $message .= "Content-Type: $content_type; charset=\"utf-8\"\r\n\r\n";
+            $message .= "$chunked_message\r\n";
+            foreach ($attachments as $attachment) {
+                $message .= "--$mime_boundary\r\n";
+                $name = $this->getEncodedStr($attachment['name']);
+                if (isset($attachment['path'])) {
+                    $type = \mime_content_type($attachment['path']);
+                    $size = \filesize($attachment['path']);
+                    $fp = \fopen($attachment['path'], 'rb');
+                    $data = \fread($fp, $size);
+                    \fclose($fp);
+                } elseif (isset($attachment['url'])) {
+                    $data = \file_get_contents($attachment['url']);
+                    $finfo = new \finfo(\FILEINFO_MIME_TYPE);
+                    $type = $finfo->buffer($data);
+                } elseif (isset($attachment['content'])) {
+                    $data = $attachment['content'];
+                    $finfo = new \finfo(\FILEINFO_MIME_TYPE);
+                    $type = $finfo->buffer($data);
+                } else {
+                    continue;
+                }
+                $data = \chunk_split(\base64_encode($data));
+                $type = \strtoupper($type);
+                $message .= "Content-Type: $type; name=\"$name\"\r\n";
+                $message .= "Content-Transfer-Encoding: base64\r\n";
+                $message .= "Content-Disposition: attachment; filename=\"$name\"\r\n";
+                $message .= "\r\n$data\r\n";
             }
-            $data = \chunk_split(\base64_encode($data));
-            $type = \strtoupper($type);
-            $message .= "Content-Type: $type; name=\"$name\"\r\n";
-            $message .= "Content-Transfer-Encoding: base64\r\n";
-            $message .= "Content-Disposition: attachment; filename=\"$name\"\r\n";
-            $message .= "\r\n$data\r\n";
+            $message .= "--$mime_boundary--";
         }
         
-        if ($is_attached) {
-            $message .= "--$mime_boundary--\r\n";
-        }
         $recipient = \implode(",", $toAddresses);
         if (\mail($recipient, $subject, $message, $headers)) {
             return true;
