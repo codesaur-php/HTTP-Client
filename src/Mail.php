@@ -17,28 +17,32 @@ class Mail
     
     private array $_attachments;
     
-    protected string $languageCode = '';
-    
     public function targetTo(string $email, string $name = '')
     {
         $this->_recipients = [];
 
-        $this->addRecipient($email, $name);
+        return $this->addRecipient($email, $name);
     }
 
     public function addRecipient(string $email, string $name = '')
     {
         $this->appendRecipient('To', $email, $name);
+        
+        return $this;
     }
 
     public function addCCRecipient(string $email, string $name = '')
     {
         $this->appendRecipient('Cc', $email, $name);
+        
+        return $this;
     }
 
     public function addBCCRecipient(string $email, string $name = '')
     {
         $this->appendRecipient('Bcc', $email, $name);
+        
+        return $this;
     }
 
     private function appendRecipient(string $type, string $email, string $name = '')
@@ -64,6 +68,33 @@ class Mail
             $this->_recipients[$type][] = ['email' => $email];
         }
     }
+    
+    public function addRecipients(array $recipients)
+    {
+        foreach ($recipients as $type => $recipient) {
+            if (!\is_array($recipient)) {
+                continue;
+            }
+            foreach ($recipient as $person) {
+                try {
+                    switch ($type) {
+                        case 'To': $this->addRecipient($person['email'] ?? 'null', $person['name'] ?? '');
+                            break;
+                        case 'Cc': $this->addCCRecipient($person['email'] ?? 'null', $person['name'] ?? '');
+                            break;
+                        case 'Bcc': $this->addBCCRecipient($person['email'] ?? 'null', $person['name'] ?? '');
+                            break;
+                    }
+                } catch (\Throwable $e) {
+                    if (CODESAUR_DEVELOPMENT) {
+                        \error_log($e->getMessage());
+                    }
+                }
+            }
+        }
+        
+        return $this;
+    }
 
     public function getRecipients(string $type): array
     {
@@ -79,11 +110,15 @@ class Mail
     public function setSubject(string $subject)
     {
         $this->subject = $subject;
+        
+        return $this;
     }
 
     public function setMessage(string $message)
     {
         $this->message = $message;
+        
+        return $this;
     }
 
     public function setFrom(string $email, string $name = '')
@@ -94,6 +129,8 @@ class Mail
 
         $this->from = $email;
         $this->fromName = $name;
+        
+        return $this;
     }
 
     public function setReplyTo(string $email, string $name = '')
@@ -104,11 +141,8 @@ class Mail
 
         $this->replyTo = $email;
         $this->replyToName = $name;
-    }
-
-    public function setLanguageCode(string $languageCode)
-    {
-        $this->languageCode = $languageCode;
+        
+        return $this;
     }
 
     public function addAttachment(array $attachment)
@@ -122,6 +156,8 @@ class Mail
         } else {
             throw new \InvalidArgumentException('Invalid attachment!');
         }
+        
+        return $this;
     }
 
     public function addFileAttachment(string $filePath)
@@ -130,6 +166,8 @@ class Mail
             throw new \InvalidArgumentException('Invalid file attachment!');
         }
         $this->appendAttachment(['path' => $filePath, 'name' => \basename($filePath)]);
+        
+        return $this;
     }
     
     public function addUrlAttachment(string $fileUrl)
@@ -141,6 +179,8 @@ class Mail
         $path = \parse_url($fileUrl, \PHP_URL_PATH);
         $fileName = \basename($path);
         $this->appendAttachment(['url' => $fileUrl, 'name' => $fileName]);
+        
+        return $this;
     }
 
     public function addContentAttachment(string $fileContent, string $fileName)
@@ -149,6 +189,8 @@ class Mail
             throw new \InvalidArgumentException('Empty attachment content!');
         }
         $this->appendAttachment(['content' => $fileContent, 'name' => $fileName]);
+        
+        return $this;
     }
 
     private function appendAttachment(array $attachment)
@@ -208,7 +250,7 @@ class Mail
         }
     }
 
-    public function send(): bool
+    public function sendMail(): bool
     {
         $this->assertValues();
         
