@@ -1,14 +1,15 @@
 {
     "name": "codesaur/http-client",
-    "description": "An elegant object-oriented application development framework component for PHP 8.2.1 or newer",
+    "description": "HTTP хүсэлт илгээх болон MIME имэйл боловсруулах/илгээх энгийн хөнгөн жинтэй, объект хандалтат http-client компонент",
     "keywords": [
-        "http", "client", "http-client", "mail", "mongol", "mongolia", "mongolian", "монгол", "codesaur", "кодзавр", "narankhuu", "наранхүү", "ololt", "ололт", "мөнхийн ололт", "munkhiin ololt"
+        "http", "client", "http-client", "mail", "mongol", "mongolia", "монгол", "codesaur", "narankhuu", "coden", "кодзавр", "наранхүү", "коден"
     ],
     "homepage": "https://github.com/codesaur-php",
     "authors": [
         {
-            "name": "Narankhuu",
-            "email": "codesaur@gmail.com"
+            "name": "Narankhuu (+976 99000287)",
+            "email": "codesaur@gmail.com",
+            "homepage": "https://github.com/codesaur"
         }
     ],
     "require": {

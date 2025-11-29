@@ -2,13 +2,19 @@
 
 namespace codesaur\Http\Client\Example;
 
-/* DEV: v1.2021.10.09
- * 
- * This is an example script!
+/**
+ * JSONClient ашиглан POST хүсэлт илгээх жишээ.
+ *
+ * Энэ скрипт нь JSONClient класс ашиглан
+ * https://httpbin.org/post руу JSON POST хүсэлт илгээж,
+ * серверийн буцаасан хариуг шалгах зориулалттай.
+ *
+ * httpbin.org нь туршилтын зориулалттай, олон жил тогтвортой ажилласан
+ * API тул хөгжүүлэлтийн үеийн жишээ болгон ашиглахад тохиромжтой.
  */
 
 \ini_set('display_errors', 'On');
-\error_reporting(\E_ALL);
+\error_reporting(E_ALL);
 
 require_once '../vendor/autoload.php';
 
@@ -16,6 +22,22 @@ require_once '../vendor/autoload.php';
 
 use codesaur\Http\Client\JSONClient;
 
+// JSON клиент үүсгэнэ
 $client = new JSONClient();
-$response = $client->get('http://echo.jsontest.com/it\'s/a/wonderful/life');
-echo \json_encode($response) ?: '{"error":"Can\'t encode response!"}';
+
+/**
+ * POST хүсэлт илгээж туршиж үзэх.
+ *
+ * Илгээх payload:
+ *   ['test' => 'codesaur']
+ *
+ * JSONClient нь payload-ийг автоматаар JSON болгон хувиргана.
+ */
+$response = $client->post(
+    'https://httpbin.org/post',
+    ['test' => 'codesaur']
+);
+
+// Серверийн JSON хариуг хэвлэнэ
+echo \json_encode($response)
+    ?: '{"error":"Can\'t encode response!"}';
