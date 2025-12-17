@@ -67,8 +67,13 @@ class Mail
      * Олон хүлээн авагчийг reset хийж, зөвхөн нэг шинэ recipient оноох.
      *
      * @param string $email
+     *      Хүлээн авагчийн имэйл хаяг.
+     *
      * @param string $name
+     *      Хүлээн авагчийн нэр (сонголттой).
+     *
      * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
      */
     public function targetTo(string $email, string $name = '')
     {
@@ -79,7 +84,14 @@ class Mail
     /**
      * To хүлээн авагч нэмэх.
      *
+     * @param string $email
+     *      Хүлээн авагчийн имэйл хаяг.
+     *
+     * @param string $name
+     *      Хүлээн авагчийн нэр (сонголттой).
+     *
      * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
      */
     public function addRecipient(string $email, string $name = '')
     {
@@ -90,7 +102,14 @@ class Mail
     /**
      * Cc хүлээн авагч нэмэх.
      *
+     * @param string $email
+     *      Cc хүлээн авагчийн имэйл хаяг.
+     *
+     * @param string $name
+     *      Cc хүлээн авагчийн нэр (сонголттой).
+     *
      * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
      */
     public function addCCRecipient(string $email, string $name = '')
     {
@@ -101,7 +120,14 @@ class Mail
     /**
      * Bcc хүлээн авагч нэмэх.
      *
+     * @param string $email
+     *      Bcc хүлээн авагчийн имэйл хаяг.
+     *
+     * @param string $name
+     *      Bcc хүлээн авагчийн нэр (сонголттой).
+     *
      * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
      */
     public function addBCCRecipient(string $email, string $name = '')
     {
@@ -110,9 +136,21 @@ class Mail
     }
 
     /**
-     * Дотоод функц — хүлээн авагчдын массив руу төрөлтэй нь нэмэх.
+     * Дотоод функц - хүлээн авагчдын массив руу төрөлтэй нь нэмэх.
+     *
+     * @param string $type
+     *      Хүлээн авагчийн төрөл ('To', 'Cc', 'Bcc').
+     *
+     * @param string $email
+     *      Имэйл хаяг.
+     *
+     * @param string $name
+     *      Нэр (сонголттой).
+     *
+     * @return void
      *
      * @throws \InvalidArgumentException
+     *      Имэйл хаяг буруу байвал.
      */
     private function appendRecipient(string $type, string $email, string $name = '')
     {
@@ -138,8 +176,12 @@ class Mail
     /**
      * Олон хүлээн авагчийг массив хэлбэрээр нэмэх.
      *
-     * @param array $recipients ['To'=>[], 'Cc'=>[], 'Bcc'=>[]]
+     * @param array $recipients
+     *      Хүлээн авагчдын массив: ['To'=>[], 'Cc'=>[], 'Bcc'=>[]]
+     *      Жишээ: ['To' => [['email' => 'user@example.com', 'name' => 'Нэр']]]
+     *
      * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
      */
     public function addRecipients(array $recipients)
     {
@@ -160,7 +202,9 @@ class Mail
                             break;
                     }
                 } catch (\Throwable $e) {
-                    if (CODESAUR_DEVELOPMENT) {
+                    if (\defined('CODESAUR_DEVELOPMENT')
+                        && CODESAUR_DEVELOPMENT
+                    ) {
                         \error_log($e->getMessage());
                     }
                 }
@@ -173,7 +217,25 @@ class Mail
     /**
      * Тодорхой төрлийн хүлээн авагчдын жагсаалтыг буцаах.
      *
-     * @param string $type To|Cc|Bcc
+     * @param string $type
+     *      Хүлээн авагчийн төрөл ('To', 'Cc', 'Bcc').
+     *
+     * @return array
+     *      Хүлээн авагчдын жагсаалт, эсвэл хоосон массив.
+     *      
+     *      Жишээ буцаах утга:
+     *      ```php
+     *      [
+     *          ['email' => 'user1@example.com', 'name' => 'Нэр 1'],
+     *          ['email' => 'user2@example.com'],
+     *          ['email' => 'user3@example.com', 'name' => 'Нэр 3']
+     *      ]
+     *      ```
+     *      
+     *      Хэрэв хүлээн авагч байхгүй бол хоосон массив буцаана:
+     *      ```php
+     *      []
+     *      ```
      */
     public function getRecipients(string $type): array
     {
@@ -188,7 +250,11 @@ class Mail
     /**
      * Имэйлийн гарчиг тохируулах.
      *
+     * @param string $subject
+     *      Имэйлийн гарчиг.
+     *
      * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
      */
     public function setSubject(string $subject)
     {
@@ -199,7 +265,11 @@ class Mail
     /**
      * Имэйлийн гол агуулга тохируулах.
      *
+     * @param string $message
+     *      Имэйлийн агуулга (HTML эсвэл энгийн текст).
+     *
      * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
      */
     public function setMessage(string $message)
     {
@@ -210,8 +280,17 @@ class Mail
     /**
      * Илгээгчийн мэдээлэл тохируулах.
      *
-     * @throws \InvalidArgumentException
+     * @param string $email
+     *      Илгээгчийн имэйл хаяг.
+     *
+     * @param string $name
+     *      Илгээгчийн нэр (сонголттой).
+     *
      * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
+     *
+     * @throws \InvalidArgumentException
+     *      Имэйл хаяг буруу байвал.
      */
     public function setFrom(string $email, string $name = '')
     {
@@ -227,7 +306,17 @@ class Mail
     /**
      * Reply-To тохируулах.
      *
+     * @param string $email
+     *      Хариу илгээх имэйл хаяг.
+     *
+     * @param string $name
+     *      Хариу илгээх нэр (сонголттой).
+     *
      * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
+     *
+     * @throws \InvalidArgumentException
+     *      Имэйл хаяг буруу байвал.
      */
     public function setReplyTo(string $email, string $name = '')
     {
@@ -243,7 +332,17 @@ class Mail
     /**
      * Хавсралт нэмж өгөгдсөн төрөлд үндэслэн чиглүүлэх.
      *
+     * @param array $attachment
+     *      Хавсралтын массив:
+     *      - ['path' => '/path/to/file'] - файлын замаар
+     *      - ['url' => 'https://example.com/file'] - URL-аар
+     *      - ['content' => '...', 'name' => 'file.txt'] - агуулгаар
+     *
+     * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
+     *
      * @throws \InvalidArgumentException
+     *      Хавсралтын мэдээлэл буруу байвал.
      */
     public function addAttachment(array $attachment)
     {
@@ -263,7 +362,14 @@ class Mail
     /**
      * Файлын замаар хавсралт нэмэх.
      *
+     * @param string $filePath
+     *      Хавсралт болгох файлын зам.
+     *
+     * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
+     *
      * @throws \InvalidArgumentException
+     *      Файл олдсонгүй эсвэл буруу байвал.
      */
     public function addFileAttachment(string $filePath)
     {
@@ -282,17 +388,30 @@ class Mail
     /**
      * URL дээрх файлыг хавсралтад нэмэх.
      *
+     * @param string $fileUrl
+     *      Хавсралт болгох файлын URL.
+     *
+     * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
+     *
      * @throws \InvalidArgumentException
+     *      URL хүчинтэй биш эсвэл файл олдсонгүй бол.
      */
     public function addUrlAttachment(string $fileUrl)
     {
-        $headers = \get_headers($fileUrl);
-        if (\stripos($headers[0], '200 OK') === false) {
+        $headers = @\get_headers($fileUrl);
+        if ($headers === false
+            || empty($headers[0])
+            || \stripos($headers[0], '200 OK') === false
+        ) {
             throw new \InvalidArgumentException('Invalid URL attachment!');
         }
 
         $path = \parse_url($fileUrl, \PHP_URL_PATH);
         $fileName = \basename($path);
+        if (empty($fileName)) {
+            $fileName = 'attachment';
+        }
 
         $this->appendAttachment(['url' => $fileUrl, 'name' => $fileName]);
         return $this;
@@ -300,6 +419,18 @@ class Mail
 
     /**
      * Raw binary өгөгдлөөр хавсралт нэмэх.
+     *
+     * @param string $fileContent
+     *      Хавсралтын агуулга (binary эсвэл текст).
+     *
+     * @param string $fileName
+     *      Хавсралтын файлын нэр.
+     *
+     * @return $this
+     *      Fluent interface-ийн зориулалтаар объектыг буцаана.
+     *
+     * @throws \InvalidArgumentException
+     *      Агуулга эсвэл файлын нэр хоосон байвал.
      */
     public function addContentAttachment(string $fileContent, string $fileName)
     {
@@ -313,6 +444,11 @@ class Mail
 
     /**
      * Дотоод хавсралт массив руу нэгж хавсралт нэмэх.
+     *
+     * @param array $attachment
+     *      Хавсралтын мэдээлэл (path, url, content, name).
+     *
+     * @return void
      */
     private function appendAttachment(array $attachment)
     {
@@ -327,6 +463,8 @@ class Mail
 
     /**
      * Хавсралтуудыг хоослох.
+     *
+     * @return void
      */
     public function clearAttachments()
     {
@@ -335,6 +473,9 @@ class Mail
 
     /**
      * Хавсралтын жагсаалт буцаах.
+     *
+     * @return array
+     *      Хавсралтын жагсаалт, эсвэл хоосон массив.
      */
     public function getAttachments(): array
     {
@@ -342,7 +483,16 @@ class Mail
     }
 
     /**
-     * Дотоод — Имэйл хаягийг MIME стандартын дагуу форматлах.
+     * Дотоод - Имэйл хаягийг MIME стандартын дагуу форматлах.
+     *
+     * @param array $address
+     *      Имэйл хаягийн массив: ['email' => '...', 'name' => '...'].
+     *
+     * @return string
+     *      Форматлагдсан имэйл хаяг (жишээ: "Нэр <email@example.com>").
+     *
+     * @throws \InvalidArgumentException
+     *      Имэйл хаяг тохируулаагүй байвал.
      */
     private function getAddressLine(array $address): string
     {
@@ -361,6 +511,12 @@ class Mail
 
     /**
      * MIME header-д зориулсан UTF-8 Base64 encode.
+     *
+     * @param string $value
+     *      Кодчилох утга.
+     *
+     * @return string
+     *      Кодчилогдсон эсвэл анхны утга (ASCII тэмдэгтүүд байвал).
      */
     private function getEncodedStr(string $value): string
     {
@@ -372,12 +528,14 @@ class Mail
     /**
      * Имэйл илгээхээс өмнө шаардлагатай бүх утгууд байгаа эсэхийг шалгах.
      *
+     * @return void
+     *
      * @throws \InvalidArgumentException
+     *      Хүлээн авагч, илгээгч, гарчиг эсвэл мессеж тохируулаагүй байвал.
      */
     protected function assertValues()
     {
         $recipients = $this->getRecipients('To');
-
         if (!isset($recipients[0]['email'])) {
             throw new \InvalidArgumentException('Mail recipient must be set!');
         } elseif (empty($this->from)) {
@@ -398,6 +556,7 @@ class Mail
     public function sendMail(): bool
     {
         $this->assertValues();
+        
         \mb_internal_encoding('UTF-8');
         
         if (\str_contains($this->message, '</')) {
@@ -477,7 +636,7 @@ class Mail
                     continue;
                 }
                 $data = \chunk_split(\base64_encode($data));
-                $type = \strtoupper($type);
+                // MIME type-ийг зөв форматлана (жишээ: "image/jpeg", "application/pdf")
                 $message .= "Content-Type: $type; name=\"$name\"\r\n";
                 $message .= "Content-Transfer-Encoding: base64\r\n";
                 $message .= "Content-Disposition: attachment; filename=\"$name\"\r\n";

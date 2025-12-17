@@ -5,9 +5,9 @@ PHP 8.2 эсвэл түүнээс дээш хувилбарт зориулсан
 
 ## ✨ Онцлох боломжууд
 
-- ✔ **CurlClient** — cURL дээр суурилсан уян хатан HTTP клиент  
-- ✔ **JSONClient** — JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой  
-- ✔ **Mail** — HTML + Text + олон хавсралттай MIME имэйл илгээгч  
+- ✔ **CurlClient** - cURL дээр суурилсан уян хатан HTTP клиент  
+- ✔ **JSONClient** - JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой  
+- ✔ **Mail** - HTML + Text + олон хавсралттай MIME имэйл илгээгч  
 - ✔ UTF-8 бүрэн дэмжлэг (нэрс, файлын нэр, гарчиг г.м.)  
 - ✔ PSR-4 autoload  
 - ✔ Хөнгөн, хурдан, ямар ч фрэймворк дээр эсвэл дангаар ашиглаж болно  
@@ -23,7 +23,7 @@ composer require codesaur/http-client
 
 ---
 
-# 📡 1. CurlClient — Ерөнхий HTTP клиент
+# 📡 1. CurlClient - Ерөнхий HTTP клиент
 
 ```php
 use codesaur\Http\Client\CurlClient;
@@ -40,7 +40,16 @@ echo $response;
 
 ---
 
-# 🧩 2. JSONClient — JSON API-тэй ажиллах
+# 🧩 2. JSONClient - JSON API-тэй ажиллах
+
+**Анхаар:** JSONClient нь `CODESAUR_APP_ENV` environment variable-аас хамааруулан SSL verify-ийг тохируулна:
+- `development` орчинд SSL verify унтраалттай (хөгжүүлэлтэд тохиромжтой)
+- `production` эсвэл бусад орчинд SSL verify идэвхтэй (аюулгүй)
+
+```bash
+# .env файл эсвэл environment variable
+CODESAUR_APP_ENV=development  # эсвэл production
+```
 
 ### GET хүсэлт
 
@@ -78,7 +87,7 @@ echo $response['json']['test']; // codesaur
 
 ---
 
-# ✉ 3. Mail — MIME HTML + Хавсралттай имэйл клиент
+# ✉ 3. Mail - MIME HTML + Хавсралттай имэйл клиент
 
 ### Энгийн HTML имэйл илгээх
 
@@ -124,10 +133,80 @@ src/
  ├── CurlClient.php
  ├── JSONClient.php
  └── Mail.php
+tests/
+ ├── CurlClientTest.php
+ ├── JSONClientTest.php
+ └── MailTest.php
 composer.json
+phpunit.xml
 LICENSE
 README.md
 ```
+
+---
+
+# 🧪 Тест ажиллуулах
+
+Энэ төсөлд PHPUnit ашиглан unit тестүүд багтсан байна.
+
+### Тест суурилуулах
+
+```bash
+composer install
+```
+
+### Тест ажиллуулах
+
+#### 🪟 Windows (PowerShell / Command Prompt)
+
+```powershell
+# Бүх тест ажиллуулах
+vendor\bin\phpunit.bat
+
+# Тодорхой тест файл ажиллуулах
+vendor\bin\phpunit.bat tests\CurlClientTest.php
+vendor\bin\phpunit.bat tests\JSONClientTest.php
+vendor\bin\phpunit.bat tests\MailTest.php
+
+# Дэлгэрэнгүй мэдээлэлтэй ажиллуулах
+vendor\bin\phpunit.bat --testdox
+```
+
+#### 🐧 Linux / 🍎 macOS (Bash / Zsh)
+
+```bash
+# Бүх тест ажиллуулах
+vendor/bin/phpunit
+
+# Тодорхой тест файл ажиллуулах
+vendor/bin/phpunit tests/CurlClientTest.php
+vendor/bin/phpunit tests/JSONClientTest.php
+vendor/bin/phpunit tests/MailTest.php
+
+# Дэлгэрэнгүй мэдээлэлтэй ажиллуулах
+vendor/bin/phpunit --testdox
+```
+
+#### 🔧 Аль ч OS дээр (Composer Script)
+
+```bash
+# Composer script ашиглан (аль ч OS дээр ажиллана)
+composer test
+
+# Тодорхой тест файл (Windows дээр)
+composer test -- tests\CurlClientTest.php
+
+# Тодорхой тест файл (Linux/macOS дээр)
+composer test -- tests/CurlClientTest.php
+```
+
+**Анхаар:** Composer script нь аль ч OS дээр ижилхэн ажиллана, учир нь Composer нь OS-оос хамаарахгүйгээр зөв командыг сонгоно.
+
+### Тестийн бүтэц
+
+- **CurlClientTest** - CurlClient классын GET, POST, PUT, DELETE хүсэлтүүд, алдааны боловсруулалт
+- **JSONClientTest** - JSONClient классын JSON encode/decode, алдааны боловсруулалт
+- **MailTest** - Mail классын хүлээн авагч, хавсралт, валидаци шалгалтууд
 
 ---
 

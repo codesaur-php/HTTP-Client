@@ -58,7 +58,7 @@ $script_path .= $_SERVER['SERVER_NAME'] . $script_link;
 $fileUrl = \dirname($script_path) . '/Tsedenbal.jpg';
 $mail->addUrlAttachment($fileUrl);
 
-// Raw текст хавсралт (ямар ч файл биш — бид өөрсдөө үүсгэж байгаа)
+// Raw текст хавсралт (ямар ч файл биш - бид өөрсдөө үүсгэж байгаа)
 $mail->addContentAttachment("
 Хөх манхан тэнгэрийг эзэгнэнхэн төрлөө би
 Хөмсгөн сарны аялах алсын алс тойрогт

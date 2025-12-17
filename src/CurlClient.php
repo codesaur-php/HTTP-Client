@@ -26,7 +26,7 @@ class CurlClient
      *      Хүсэлт илгээх URL эсвэл endpoint.
      *
      * @param string $method  
-     *      Хэрэглэх HTTP метод (анхдагч — `GET`).
+     *      Хэрэглэх HTTP метод (анхдагч - `GET`).
      *
      * @param string $data  
      *      Хүсэлттэй хамт илгээх өгөгдөл. Хэрэв хоосон биш бол
@@ -57,6 +57,11 @@ class CurlClient
 
         if (!empty($data)) {
             \curl_setopt($ch, \CURLOPT_POSTFIELDS, $data);
+            if (!isset($options[\CURLOPT_HTTPHEADER])
+                || !\is_array($options[\CURLOPT_HTTPHEADER])
+            ) {
+                $options[\CURLOPT_HTTPHEADER] = [];
+            }
             $options[\CURLOPT_HTTPHEADER][] = 'Content-Length: ' . \strlen($data);
         }
         foreach ($options as $option => $value) {

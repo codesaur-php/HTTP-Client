@@ -63,6 +63,18 @@ class JSONClient
 
     /**
      * JSON PUT хүсэлт илгээх.
+     *
+     * @param string $uri
+     *      Хандах URL.
+     *
+     * @param array $payload
+     *      JSON болгон илгээх өгөгдөл.
+     *
+     * @param array $headers
+     *      Нэмэлт HTTP headers.
+     *
+     * @return array
+     *      Серверийн JSON хариу.
      */
     public function put(string $uri, array $payload, array $headers = []): array
     {
@@ -71,6 +83,18 @@ class JSONClient
 
     /**
      * JSON DELETE хүсэлт илгээх.
+     *
+     * @param string $uri
+     *      Хандах URL.
+     *
+     * @param array $payload
+     *      JSON болгон илгээх өгөгдөл.
+     *
+     * @param array $headers
+     *      Нэмэлт HTTP headers.
+     *
+     * @return array
+     *      Серверийн JSON хариу.
      */
     public function delete(string $uri, array $payload, array $headers = []): array
     {
@@ -85,7 +109,9 @@ class JSONClient
      * 
      * ✔ Payload-ийг автоматаар JSON болгоно  
      * ✔ Content-Type: application/json header автоматаар нэмнэ  
-     * ✔ SSL verify (host, peer) хөгжүүлэлтийн үеийн тулд унтраалттай  
+     * ✔ SSL verify нь CODESAUR_APP_ENV environment variable-аас хамаарна:
+     *      - development орчинд SSL verify унтраалттай
+     *      - production эсвэл бусад орчинд SSL verify идэвхтэй (аюулгүй)
      * ✔ JSON decode алдааг шалгана  
      * ✔ Бүх алдааг нэг мөрөөр 'error' бүтэц болгон буцаана  
      *
@@ -111,13 +137,18 @@ class JSONClient
         try {
             $header = ['Content-Type: application/json'];
 
-            foreach ($headers as $index => $field) {
-                $header[] = "$index: $field";
+            foreach ($headers as $key => $value) {
+                $header[] = "$key: $value";
             }
 
+            // SSL verify тохиргоо: CODESAUR_APP_ENV environment variable-аас уншина
+            // development орчинд SSL verify унтраалттай, production орчинд идэвхтэй
+            $appEnv = \getenv('CODESAUR_APP_ENV') ?: ($_ENV['CODESAUR_APP_ENV'] ?? $_SERVER['CODESAUR_APP_ENV'] ?? 'production');
+            $isDevelopment = \strtolower($appEnv) === 'development';
+            
             $options = [
-                \CURLOPT_SSL_VERIFYHOST => false,
-                \CURLOPT_SSL_VERIFYPEER => false,
+                \CURLOPT_SSL_VERIFYHOST => !$isDevelopment ? 2 : false,
+                \CURLOPT_SSL_VERIFYPEER => !$isDevelopment,
                 \CURLOPT_HTTPHEADER     => $header
             ];
 
