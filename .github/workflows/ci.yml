@@ -41,14 +41,17 @@ jobs:
       
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
+        shell: bash
       
       - name: Run unit tests
         run: composer test
         continue-on-error: false
+        shell: bash
       
       - name: Run integration tests
         run: composer test -- tests/Integration
         continue-on-error: false
+        shell: bash
         env:
           CODESAUR_APP_ENV: development
 

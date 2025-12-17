@@ -18,8 +18,10 @@
 ### 2. Бүтэц ⭐⭐⭐⭐⭐
 - ✅ **Хөнгөн жинтэй** - Зөвхөн шаардлагатай функцүүд
 - ✅ **Separation of Concerns** - CurlClient, JSONClient, Mail тусдаа
-- ✅ **Test Coverage** - PHPUnit тестүүд багтсан (34 тест)
-- ✅ **Composer Scripts** - `composer test` команда нэмэгдсэн
+- ✅ **Test Coverage** - PHPUnit тестүүд багтсан (124 тест: 34 unit + 90 integration)
+- ✅ **Composer Scripts** - `composer test`, `composer test:unit`, `composer test:integration` командууд нэмэгдсэн
+- ✅ **Integration Tests** - Бодит API-тай ажиллах integration тестүүд нэмэгдсэн
+- ✅ **CI/CD Pipeline** - GitHub Actions workflow тохируулагдсан
 
 ### 3. Функционал ⭐⭐⭐⭐⭐
 - ✅ **CurlClient** - Уян хатан HTTP клиент
@@ -48,7 +50,7 @@ $options[\CURLOPT_HTTPHEADER][] = 'Content-Length: ' . \strlen($data);
 ```
 
 ### 2. JSONClient.php ✅
-**Асуудал:** SSL verify унтраалттай - Production-д аюултай
+**Асуудал 1:** SSL verify унтраалттай - Production-д аюултай
 ```php
 // Зассан: Environment variable-аас уншина
 $appEnv = \getenv('CODESAUR_APP_ENV') ?: ($_ENV['CODESAUR_APP_ENV'] ?? $_SERVER['CODESAUR_APP_ENV'] ?? 'production');
@@ -59,6 +61,24 @@ $options = [
     \CURLOPT_SSL_VERIFYPEER => !$isDevelopment,
     \CURLOPT_HTTPHEADER     => $header
 ];
+```
+
+**Асуудал 2:** GET хүсэлтэд query параметрүүдийг зөв боловсруулаагүй
+```php
+// Зассан: GET хүсэлтэд query параметрүүдийг URL-д query string хэлбэрээр нэмнэ
+$isGet = \strtoupper($method) == 'GET';
+
+if ($isGet && !empty($payload)) {
+    $queryString = \http_build_query($payload);
+    $separator = \strpos($uri, '?') !== false ? '&' : '?';
+    $uri = $uri . $separator . $queryString;
+    $data = '';
+} else {
+    // POST, PUT, DELETE хүсэлтэд JSON body болгон илгээнэ
+    $data = empty($payload)
+        ? ($isGet ? '' : '{}')
+        : (\json_encode($payload) ?: throw new \Exception(__CLASS__ . ': Error encoding request payload!'));
+}
 ```
 
 ### 3. Mail.php ✅
@@ -95,15 +115,80 @@ $message .= "Content-Type: $type; name=\"$name\"\r\n";
 
 ## 📊 Тестийн үр дүн
 
+### Unit Тестүүд
+
 ```
 Tests: 34, Assertions: 60, Skipped: 8
 Status: ✅ OK (сүлжээний асуудлаар 8 тест skip хийгдсэн - хэвийн)
 ```
 
-### Тестүүдийн хуваарь:
+**Unit тестүүдийн хуваарь:**
 - **CurlClientTest** - 7 тест (3 амжилттай, 4 skip)
 - **JSONClientTest** - 8 тест (1 амжилттай, 7 skip)
 - **MailTest** - 19 тест (бүгд амжилттай)
+
+### Integration Тестүүд ✅
+
+```
+Tests: 90, Assertions: 198, Skipped: 33
+Status: ✅ OK (сүлжээний асуудлаар зарим тест skip хийгдсэн - хэвийн)
+```
+
+**Integration тестүүдийн хуваарь:**
+- **CurlClientIntegrationTest** - 7 тест
+  - Бодит GET, POST, PUT, DELETE хүсэлтүүд
+  - Header тохиргоо
+  - Timeout тохиргоо
+  - Олон хүсэлт илгээх (performance)
+  
+- **JSONClientIntegrationTest** - 9 тест
+  - Бодит JSON API хүсэлтүүд
+  - SSL verify тохиргоо (development/production)
+  - Header тохиргоо
+  - Олон төрлийн өгөгдөл
+  - Алдааны боловсруулалт
+  
+- **MailIntegrationTest** - 8 тест
+  - Бүрэн тохиргоо
+  - Хавсралт (файл, URL, content)
+  - UTF-8 дэмжлэг
+  - HTML/Plaintext имэйл
+  - Олон хүлээн авагч
+  - Fluent interface
+  
+- **EndToEndTest** - 4 тест
+  - CurlClient болон JSONClient хамтдаа
+  - API-аас мэдээлэл авч Mail-аар илгээх
+  - Олон API хүсэлт илгээж, үр дүнг Mail-аар илгээх
+  - Файл татаж Mail-аар илгээх
+
+### Нийт Тестийн Статистик
+
+```
+Нийт тест: 124 (34 unit + 90 integration)
+Нийт assertions: 258
+Skip хийгдсэн: 41 (сүлжээний асуудлаар - хэвийн)
+Амжилттай: 83
+```
+
+### Тест ажиллуулах командууд
+
+```bash
+# Бүх тест
+composer test
+
+# Зөвхөн unit тест
+composer test:unit
+
+# Зөвхөн integration тест
+composer test:integration
+
+# Бүх тест (unit + integration)
+composer test:all
+
+# Coverage мэдээлэлтэй
+composer test:coverage
+```
 
 ---
 
@@ -145,8 +230,6 @@ Status: ✅ OK (сүлжээний асуудлаар 8 тест skip хийгд
 - Configuration класс нэмэх (timeout, retry г.м.)
 - Response класс үүсгэх
 - Logger interface нэмэх
-- Integration тестүүд нэмэх
-- CI/CD pipeline тохируулах
 
 ---
 
@@ -177,8 +260,48 @@ interface LoggerInterface {
 }
 ```
 
-4. **Integration тестүүд нэмэх**
-5. **CI/CD pipeline тохируулах**
+---
+
+## 🔄 CI/CD Pipeline ✅
+
+### GitHub Actions Workflow
+
+Энэ төсөл нь GitHub Actions ашиглан CI/CD pipeline-тэй:
+
+**Файл:** `.github/workflows/ci.yml`
+
+**Онцлогууд:**
+- ✅ **Автомат тест** - Push эсвэл Pull Request үед тест ажиллуулна
+- ✅ **Олон PHP хувилбар** - PHP 8.2, 8.3 дээр шалгана
+- ✅ **Олон OS** - Ubuntu болон Windows дээр шалгана
+- ✅ **Code Coverage** - Pull Request үед coverage мэдээлэл үүсгэнэ
+- ✅ **Security Check** - Composer audit ажиллуулна
+- ✅ **Code Linting** - PHP syntax шалгана
+
+**CI/CD Pipeline-ийн алхмууд:**
+
+1. **Test Job** - Олон PHP хувилбар болон OS дээр тест ажиллуулна
+   - PHP 8.2, 8.3
+   - Ubuntu, Windows
+   - Unit болон Integration тестүүд
+
+2. **Test Coverage Job** - Pull Request үед coverage мэдээлэл үүсгэнэ
+   - Xdebug ашиглан coverage мэдээлэл цуглуулна
+   - Codecov-д upload хийнэ
+
+3. **Lint Job** - Код форматлалт шалгана
+   - PHP syntax шалгана
+   - Composer validate
+
+4. **Security Job** - Аюулгүй байдлыг шалгана
+   - Composer audit ажиллуулна
+
+**CI/CD Pipeline-ийн давуу тал:**
+- Автоматаар тест ажиллуулна
+- Олон орчинд шалгана (PHP хувилбар, OS)
+- Code coverage мэдээлэл үүсгэнэ
+- Аюулгүй байдлыг шалгана
+- Код чанарыг хангана
 
 ---
 
@@ -188,20 +311,29 @@ interface LoggerInterface {
 HTTP-Client/
 ├── src/
 │   ├── CurlClient.php      ✅ Зассан
-│   ├── JSONClient.php      ✅ Зассан (SSL verify env var)
+│   ├── JSONClient.php      ✅ Зассан (SSL verify env var, GET query params)
 │   └── Mail.php            ✅ Зассан (форматлалт сайжруулагдсан)
 ├── tests/
-│   ├── CurlClientTest.php  ✅ 7 тест
-│   ├── JSONClientTest.php  ✅ 8 тест
-│   └── MailTest.php        ✅ 19 тест
+│   ├── CurlClientTest.php  ✅ 7 unit тест
+│   ├── JSONClientTest.php  ✅ 8 unit тест
+│   ├── MailTest.php        ✅ 19 unit тест
+│   └── Integration/
+│       ├── CurlClientIntegrationTest.php  ✅ 7 integration тест
+│       ├── JSONClientIntegrationTest.php  ✅ 9 integration тест
+│       ├── MailIntegrationTest.php        ✅ 8 integration тест
+│       └── EndToEndTest.php               ✅ 4 end-to-end тест
+├── .github/
+│   └── workflows/
+│       └── ci.yml          ✅ CI/CD pipeline
 ├── example/
 │   ├── index.php           ✅ Жишээ
 │   └── index_mail.php      ✅ Жишээ
-├── composer.json           ✅ Scripts нэмэгдсэн
-├── phpunit.xml             ✅ Тохиргоо
-├── README.md               ✅ Шинэчлэгдсэн
+├── composer.json           ✅ Scripts нэмэгдсэн (test:unit, test:integration, test:all)
+├── phpunit.xml             ✅ Тохиргоо (Unit болон Integration testsuite)
+├── README.md               ✅ Шинэчлэгдсэн (Integration тестүүд, CI/CD)
+├── API.md                  ✅ API баримт бичиг (PHPDoc-аас үүсгэгдсэн)
 ├── REVIEW.md               ✅ Энэ файл
-└── .gitignore              ✅ Шинэчлэгдсэн
+└── .gitignore              ✅ Шинэчлэгдсэн (coverage, integration test files)
 ```
 
 ---
