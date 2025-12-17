@@ -152,9 +152,19 @@ class JSONClient
                 \CURLOPT_HTTPHEADER     => $header
             ];
 
-            $data = empty($payload)
-                ? (\strtoupper($method) == 'GET' ? '' : '{}')
-                : (\json_encode($payload) ?: throw new \Exception(__CLASS__ . ': Error encoding request payload!'));
+            $isGet = \strtoupper($method) == 'GET';            
+            // GET хүсэлтэд query параметрүүдийг URL-д query string хэлбэрээр нэмнэ
+            if ($isGet && !empty($payload)) {
+                $queryString = \http_build_query($payload);
+                $separator = \strpos($uri, '?') !== false ? '&' : '?';
+                $uri = $uri . $separator . $queryString;
+                $data = '';
+            } else {
+                // POST, PUT, DELETE хүсэлтэд JSON body болгон илгээнэ
+                $data = empty($payload)
+                    ? ($isGet ? '' : '{}')
+                    : (\json_encode($payload) ?: throw new \Exception(__CLASS__ . ': Error encoding request payload!'));
+            }
 
             return \json_decode(
                 (new CurlClient())->request($uri, $method, $data, $options),

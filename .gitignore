@@ -8,6 +8,12 @@ composer.lock
 .phpunit.result.cache
 tests/_output/
 
+# Code Coverage
+coverage/
+coverage.xml
+*.clover
+phpunit.coverage.xml
+
 # IDE
 .idea/
 .vscode/
@@ -18,3 +24,23 @@ tests/_output/
 # OS
 .DS_Store
 Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Integration Test temporary files
+tests/Integration/tmp/
+*.tmp
+integration_test_*.txt
+fluent_test.txt
+test_attachment.txt
+test_clear.txt
+
+# CI/CD temporary files
+.github/workflows/.tmp/
+*.log
+
+# Composer
+composer.phar

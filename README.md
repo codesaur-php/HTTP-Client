@@ -17,10 +17,8 @@ PHP 8.2 эсвэл түүнээс дээш хувилбарт зориулсан
 
 ## 📚 Баримт бичиг
 
-- 📋 [REVIEW.md](REVIEW.md) - Пакетийн бүрэн review, код чанарын үнэлгээ
-- 📚 [API.md](API.md) - Бүрэн API баримт бичиг (PHPDoc-аас үүсгэгдсэн)
-
-> **Тайлбар:** Энэхүү 2 баримт бичиг нь Cursor AI-аар үүсгэгдсэн.
+- 📋 [REVIEW.md](REVIEW.md) - Пакетийн бүрэн review, код чанарын үнэлгээ (Cursor AI)
+- 📚 [API.md](API.md) - Бүрэн API баримт бичиг (source PHPDoc-с авч Cursor AI-аар үүсгэгдсэн)
 
 ---
 
@@ -145,7 +143,15 @@ src/
 tests/
  ├── CurlClientTest.php
  ├── JSONClientTest.php
- └── MailTest.php
+ ├── MailTest.php
+ └── Integration/
+     ├── CurlClientIntegrationTest.php
+     ├── JSONClientIntegrationTest.php
+     ├── MailIntegrationTest.php
+     └── EndToEndTest.php
+.github/
+ └── workflows/
+     └── ci.yml
 composer.json
 phpunit.xml
 LICENSE
@@ -213,9 +219,52 @@ composer test -- tests/CurlClientTest.php
 
 ### Тестийн бүтэц
 
+#### Unit Тестүүд
+
 - **CurlClientTest** - CurlClient классын GET, POST, PUT, DELETE хүсэлтүүд, алдааны боловсруулалт
 - **JSONClientTest** - JSONClient классын JSON encode/decode, алдааны боловсруулалт
 - **MailTest** - Mail классын хүлээн авагч, хавсралт, валидаци шалгалтууд
+
+#### Integration Тестүүд
+
+- **CurlClientIntegrationTest** - CurlClient классын бодит API-тай ажиллах integration тест
+- **JSONClientIntegrationTest** - JSONClient классын бодит JSON API-тай ажиллах integration тест
+- **MailIntegrationTest** - Mail классын бодит нөхцөлд integration тест
+- **EndToEndTest** - Бүх компонентуудыг хамтдаа ашиглах end-to-end тест
+
+### Тест ажиллуулах командууд
+
+```bash
+# Бүх тест ажиллуулах
+composer test
+
+# Зөвхөн unit тест ажиллуулах
+composer test:unit
+
+# Зөвхөн integration тест ажиллуулах
+composer test:integration
+
+# Бүх тест (unit + integration) ажиллуулах
+composer test:all
+
+# Coverage мэдээлэлтэй ажиллуулах
+composer test:coverage
+```
+
+---
+
+# 🔄 CI/CD Pipeline
+
+Энэ төсөл нь GitHub Actions ашиглан CI/CD pipeline-тэй:
+
+- ✅ **Автомат тест** - Push эсвэл Pull Request үед тест ажиллуулна
+- ✅ **Олон PHP хувилбар** - PHP 8.2, 8.3 дээр шалгана
+- ✅ **Олон OS** - Ubuntu болон Windows дээр шалгана
+- ✅ **Code Coverage** - Pull Request үед coverage мэдээлэл үүсгэнэ
+- ✅ **Security Check** - Composer audit ажиллуулна
+- ✅ **Code Linting** - PHP syntax шалгана
+
+CI/CD pipeline-ийн дэлгэрэнгүй мэдээлэл: [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
 ---
 
@@ -231,7 +280,3 @@ Narankhuu
 📧 codesaur@gmail.com  
 📱 +976 99000287  
 🌐 https://github.com/codesaur  
-
----
-
-**Тайлбар:** Энэхүү README.md файл нь Cursor AI-аар үүсгэгдсэн.

@@ -1,0 +1,136 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: PHP Unit Tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        php-version: ['8.2', '8.3']
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          extensions: curl, json, mbstring
+          coverage: none
+      
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+      
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ${{ runner.os }}-php-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-${{ matrix.php-version }}-composer-
+      
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+      
+      - name: Run unit tests
+        run: composer test
+        continue-on-error: false
+      
+      - name: Run integration tests
+        run: composer test -- tests/Integration
+        continue-on-error: false
+        env:
+          CODESAUR_APP_ENV: development
+
+  test-coverage:
+    name: Test Coverage
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: curl, json, mbstring
+          coverage: xdebug
+      
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.composer/cache
+          key: ubuntu-latest-php-8.2-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ubuntu-latest-php-8.2-composer-
+      
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+      
+      - name: Run tests with coverage
+        run: composer test:coverage
+      
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
+
+  lint:
+    name: Code Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: curl, json, mbstring
+      
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+      
+      - name: Check PHP syntax
+        run: |
+          find src tests -name "*.php" -exec php -l {} \;
+      
+      - name: Validate composer.json
+        run: composer validate --strict
+
+  security:
+    name: Security Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: curl, json, mbstring
+      
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+      
+      - name: Run security check
+        run: composer audit || true
+        continue-on-error: true
