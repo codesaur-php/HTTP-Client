@@ -1,4 +1,4 @@
-# 🦖 codesaur/http-client  
+# 🦖 codesaur/http-client
 
 [![CI](https://github.com/codesaur-php/HTTP-Client/actions/workflows/ci.yml/badge.svg)](https://github.com/codesaur-php/HTTP-Client/actions)
 [![PHP Version](https://img.shields.io/badge/php-%5E8.2.1-777BB4.svg?logo=php)](https://www.php.net/)
@@ -8,279 +8,185 @@ HTTP хүсэлт илгээх болон MIME имэйл боловсруула
 
 ---
 
-## ✨ Онцлох боломжууд
+## Агуулга / Table of Contents
 
-- ✔ **CurlClient** - cURL дээр суурилсан уян хатан HTTP клиент  
-- ✔ **JSONClient** - JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой  
-- ✔ **Mail** - HTML + Text + олон хавсралттай MIME имэйл илгээгч  
+1. [Монгол](#1-монгол-тайлбар) | 2. [English](#2-english-description) | 3. [Getting Started](#3-getting-started)
+
+---
+
+## 1. Монгол тайлбар
+
+`codesaur/http-client` нь **codesaur ecosystem**-ийн нэг хэсэг бөгөөд хөнгөн жинтэй,
+фрэймворкоос үл хамааран standalone байдлаар ашиглаж болох PHP HTTP клиент компонент юм.
+
+Багц нь дараах 3 үндсэн class-аас бүрдэнэ:
+
+- **CurlClient** - cURL дээр суурилсан уян хатан HTTP клиент  
+- **JSONClient** - JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой  
+- **Mail** - HTML + Text + олон хавсралттай MIME имэйл илгээгч  
+
+### Онцлох боломжууд
+
 - ✔ UTF-8 бүрэн дэмжлэг (нэрс, файлын нэр, гарчиг г.м.)  
 - ✔ Хөнгөн, хурдан, ямар ч фрэймворк дээр эсвэл дангаар ашиглаж болно  
 - ✔ Зөвхөн `ext-curl`, `ext-json` байхад л болно  
 
+### Дэлгэрэнгүй мэдээлэл
+
+- 📖 [Бүрэн танилцуулга](docs/mn/README.md) - Суурилуулалт, хэрэглээ, жишээнүүд
+- 📚 [API тайлбар](docs/mn/api.md) - Бүх метод, exception-үүдийн тайлбар
+- 🔍 [Шалгалтын тайлан](docs/mn/review.md) - Код шалгалтын тайлан
+
 ---
 
-## 📚 Баримт бичиг
+## 2. English description
 
-- 📋 [REVIEW.md](REVIEW.md) - Пакетийн бүрэн review, код чанарын үнэлгээ (Cursor AI ашиглан үүсгэсэн)
-- 📚 [API.md](API.md) - Бүрэн API баримт бичиг (PHPDoc-уудаас Cursor AI ашиглан автоматаар үүсгэсэн)
+`codesaur/http-client` is part of the **codesaur ecosystem** and is a lightweight PHP HTTP client component that can be used standalone, independent of any framework.
+
+The package consists of the following 3 core classes:
+
+- **CurlClient** - flexible HTTP client based on cURL  
+- **JSONClient** - convenient for working with REST APIs with JSON data  
+- **Mail** - MIME email sender with HTML + Text + multiple attachments  
+
+### Key Features
+
+- ✔ Full UTF-8 support (names, file names, headers, etc.)  
+- ✔ Lightweight, fast, can be used on any framework or standalone  
+- ✔ Only requires `ext-curl` and `ext-json`  
+
+### Documentation
+
+- 📖 [Full Documentation](docs/en/README.md) - Installation, usage, examples
+- 📚 [API Reference](docs/en/api.md) - Complete API documentation
+- 🔍 [Review](docs/en/review.md) - Complete package review and code quality assessment
 
 ---
 
-## 📦 Суурилуулалт
+## 3. Getting Started
+
+### Requirements
+
+- PHP **8.2.1+**
+- Composer
+- `ext-curl` extension
+- `ext-json` extension
+
+### Installation
+
+Composer ашиглан суулгана / Install via Composer:
 
 ```bash
 composer require codesaur/http-client
 ```
 
----
+### Quick Examples
 
-# 📡 1. CurlClient - Ерөнхий HTTP клиент
+#### CurlClient - Ерөнхий HTTP клиент
 
 ```php
 use codesaur\Http\Client\CurlClient;
 
+// CurlClient үүсгэх / Create CurlClient instance
 $curl = new CurlClient();
 
+// GET хүсэлт илгээх / Send GET request
 $response = $curl->request(
     'https://httpbin.org/get',
     'GET'
 );
 
+// Хариуг хэвлэх / Print response
 echo $response;
 ```
 
----
-
-# 🧩 2. JSONClient - JSON API-тэй ажиллах
-
-**Анхаар:** JSONClient нь `CODESAUR_APP_ENV` environment variable-аас хамааруулан SSL verify-ийг тохируулна:
-- `development` орчинд SSL verify унтраалттай (хөгжүүлэлтэд тохиромжтой)
-- `production` эсвэл бусад орчинд SSL verify идэвхтэй (аюулгүй)
-
-```bash
-# .env файл эсвэл environment variable
-CODESAUR_APP_ENV=development  # эсвэл production
-```
-
-### GET хүсэлт
+#### JSONClient - JSON API-тэй ажиллах
 
 ```php
 use codesaur\Http\Client\JSONClient;
 
+// JSONClient үүсгэх / Create JSONClient instance
 $client = new JSONClient();
 
+// GET хүсэлт илгээх / Send GET request
 $response = $client->get(
     'https://httpbin.org/get',
     ['hello' => 'world']
 );
 
-print_r($response);
-```
-
-### POST хүсэлт
-
-```php
+// POST хүсэлт илгээх / Send POST request
 $response = $client->post(
     'https://httpbin.org/post',
     ['test' => 'codesaur']
 );
 
-echo $response['json']['test']; // codesaur
+// Хариуг хэвлэх / Print response
+print_r($response);
 ```
 
-### Алдаа буцаах бүтэц
-
-```json
-{
-  "error": { "code": 123, "message": "Алдаа үүссэн байна..." }
-}
-```
-
----
-
-# ✉ 3. Mail - MIME HTML + Хавсралттай имэйл клиент
-
-### Энгийн HTML имэйл илгээх
+#### Mail - MIME HTML + Хавсралттай имэйл клиент
 
 ```php
 use codesaur\Http\Client\Mail;
 
+// Mail үүсгэх / Create Mail instance
 $mail = new Mail();
 
+// Хүлээн авагч тохируулах / Set recipient
 $mail->targetTo('user@example.com', 'Хэрэглэгч');
+// Илгээгч тохируулах / Set sender
 $mail->setFrom('no-reply@example.com', 'codesaur');
+// Гарчиг тохируулах / Set subject
 $mail->setSubject('Сайн байна уу?');
+// Зурвас тохируулах / Set message
 $mail->setMessage('<h1>Hello!</h1><p>Тест имэйл.</p>');
 
+// Файл хавсралт нэмэх / Add file attachment
+$mail->addFileAttachment(__DIR__ . '/file.pdf');
+// URL-аас хавсралт нэмэх / Add attachment from URL
+$mail->addUrlAttachment('https://example.com/logo.png');
+
+// Имэйл илгээх / Send email
 $mail->sendMail();
 ```
 
-### Хавсралт нэмэх
+### Running Tests
 
-```php
-$mail->addFileAttachment(__DIR__ . '/file.pdf');
-$mail->addUrlAttachment('https://example.com/logo.png');
-$mail->addContentAttachment("Hello world", "note.txt");
-```
-
-### Олон хүлээн авагч
-
-```php
-$mail->addRecipient('a@example.com', 'Хүн А');
-$mail->addCCRecipient('b@example.com', 'Хүн Б');
-$mail->addBCCRecipient('c@example.com', 'Хүн С');
-```
-
----
-
-# 📂 Файлын бүтэц
-
-```
-example/
- ├── index.php
- ├── index_mail.php
- └── *.jpg
-src/
- ├── CurlClient.php
- ├── JSONClient.php
- └── Mail.php
-tests/
- ├── CurlClientTest.php
- ├── JSONClientTest.php
- ├── MailTest.php
- └── Integration/
-     ├── CurlClientIntegrationTest.php
-     ├── JSONClientIntegrationTest.php
-     ├── MailIntegrationTest.php
-     └── EndToEndTest.php
-.github/
- └── workflows/
-     └── ci.yml
-composer.json
-phpunit.xml
-LICENSE
-README.md
-```
-
----
-
-# 🧪 Тест ажиллуулах
-
-Энэ төсөлд PHPUnit ашиглан unit тестүүд багтсан байна.
-
-### Тест суурилуулах
+Тест ажиллуулах / Run tests:
 
 ```bash
-composer install
-```
-
-### Тест ажиллуулах
-
-#### 🪟 Windows (PowerShell / Command Prompt)
-
-```powershell
-# Бүх тест ажиллуулах
-vendor\bin\phpunit.bat
-
-# Тодорхой тест файл ажиллуулах
-vendor\bin\phpunit.bat tests\CurlClientTest.php
-vendor\bin\phpunit.bat tests\JSONClientTest.php
-vendor\bin\phpunit.bat tests\MailTest.php
-
-# Дэлгэрэнгүй мэдээлэлтэй ажиллуулах
-vendor\bin\phpunit.bat --testdox
-```
-
-#### 🐧 Linux / 🍎 macOS (Bash / Zsh)
-
-```bash
-# Бүх тест ажиллуулах
-vendor/bin/phpunit
-
-# Тодорхой тест файл ажиллуулах
-vendor/bin/phpunit tests/CurlClientTest.php
-vendor/bin/phpunit tests/JSONClientTest.php
-vendor/bin/phpunit tests/MailTest.php
-
-# Дэлгэрэнгүй мэдээлэлтэй ажиллуулах
-vendor/bin/phpunit --testdox
-```
-
-#### 🔧 Аль ч OS дээр (Composer Script)
-
-```bash
-# Composer script ашиглан (аль ч OS дээр ажиллана)
+# Бүх тестүүдийг ажиллуулах / Run all tests
 composer test
 
-# Тодорхой тест файл (Windows дээр)
-composer test -- tests\CurlClientTest.php
-
-# Тодорхой тест файл (Linux/macOS дээр)
-composer test -- tests/CurlClientTest.php
-```
-
-**Анхаар:** Composer script нь аль ч OS дээр ижилхэн ажиллана, учир нь Composer нь OS-оос хамаарахгүйгээр зөв командыг сонгоно.
-
-### Тестийн бүтэц
-
-#### Unit Тестүүд
-
-- **CurlClientTest** - CurlClient классын GET, POST, PUT, DELETE хүсэлтүүд, алдааны боловсруулалт
-- **JSONClientTest** - JSONClient классын JSON encode/decode, алдааны боловсруулалт
-- **MailTest** - Mail классын хүлээн авагч, хавсралт, валидаци шалгалтууд
-
-#### Integration Тестүүд
-
-- **CurlClientIntegrationTest** - CurlClient классын бодит API-тай ажиллах integration тест
-- **JSONClientIntegrationTest** - JSONClient классын бодит JSON API-тай ажиллах integration тест
-- **MailIntegrationTest** - Mail классын бодит нөхцөлд integration тест
-- **EndToEndTest** - Бүх компонентуудыг хамтдаа ашиглах end-to-end тест
-
-### Тест ажиллуулах командууд
-
-```bash
-# Бүх тест ажиллуулах
-composer test
-
-# Зөвхөн unit тест ажиллуулах
+# Зөвхөн unit тест / Unit tests only
 composer test:unit
 
-# Зөвхөн integration тест ажиллуулах
+# Зөвхөн integration тест / Integration tests only
 composer test:integration
 
-# Бүх тест (unit + integration) ажиллуулах
-composer test:all
-
-# Coverage мэдээлэлтэй ажиллуулах
+# Coverage-тэй тест ажиллуулах / Run tests with coverage
 composer test:coverage
 ```
 
 ---
 
-# 🔄 CI/CD Pipeline
+## Changelog
 
-Энэ төсөл нь GitHub Actions ашиглан CI/CD pipeline-тэй:
+- 📝 [CHANGELOG.md](CHANGELOG.md) - Full version history
 
-- ✅ **Автомат тест** - Push эсвэл Pull Request үед тест ажиллуулна
-- ✅ **Олон PHP хувилбар** - PHP 8.2, 8.3 дээр шалгана
-- ✅ **Олон OS** - Ubuntu болон Windows дээр шалгана
-- ✅ **Code Coverage** - Pull Request үед coverage мэдээлэл үүсгэнэ
-- ✅ **Security Check** - Composer audit ажиллуулна
-- ✅ **Code Linting** - PHP syntax шалгана
+## Contributing & Security
 
-CI/CD pipeline-ийн дэлгэрэнгүй мэдээлэл: [.github/workflows/ci.yml](.github/workflows/ci.yml)
+- 🤝 [Contributing Guide](.github/CONTRIBUTING.md)
+- 🔐 [Security Policy](.github/SECURITY.md)
 
----
+## License
 
-# 📄 Лиценз
+This project is licensed under the MIT License.
 
-Энэ төсөл MIT лицензтэй.
+## Author
 
----
-
-# 👨‍💻 Зохиогч
-
-Narankhuu  
+**Narankhuu**  
 📧 codesaur@gmail.com  
-📲 [+976 99000287](https://wa.me/97699000287)  
-🌐 https://github.com/codesaur  
+🌐 https://github.com/codesaur
+
+🦖 **codesaur ecosystem:** https://codesaur.net
