@@ -105,13 +105,14 @@ Send JSON GET request.
 
 **Signature:**
 ```php
-public function get(string $uri, array $payload = [], array $headers = []): array
+public function get(string $uri, array $payload = [], array $headers = [], array $options = []): array
 ```
 
 **Parameters:**
 - `$uri` (string) - URL to access
 - `$payload` (array) - Data to be added as query string
 - `$headers` (array) - Additional HTTP headers (in `name => value` format)
+- `$options` (array) - Additional cURL options (e.g., `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - Decoded JSON response or error structure
@@ -129,6 +130,14 @@ $response = $client->get(
 );
 
 print_r($response);
+
+// Use HTTP/1.1 version (to prevent HTTP/2 errors)
+$response = $client->get(
+    'https://httpbin.org/get',
+    ['test' => 'value'],
+    [],
+    [CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1]
+);
 ```
 
 ##### `post()`
@@ -137,13 +146,14 @@ Send JSON POST request.
 
 **Signature:**
 ```php
-public function post(string $uri, array $payload, array $headers = []): array
+public function post(string $uri, array $payload, array $headers = [], array $options = []): array
 ```
 
 **Parameters:**
 - `$uri` (string) - URL to access
 - `$payload` (array) - Data to send as JSON
 - `$headers` (array) - Additional HTTP headers
+- `$options` (array) - Additional cURL options (e.g., `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - Server's JSON response
@@ -157,6 +167,17 @@ $response = $client->post(
 );
 
 echo $response['json']['test']; // codesaur
+
+// Use HTTP/1.1 version and set timeout
+$response = $client->post(
+    'https://api.example.com/endpoint',
+    ['data' => 'value'],
+    ['Authorization' => 'Bearer token'],
+    [
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_TIMEOUT => 30
+    ]
+);
 ```
 
 ##### `put()`
@@ -165,13 +186,14 @@ Send JSON PUT request.
 
 **Signature:**
 ```php
-public function put(string $uri, array $payload, array $headers = []): array
+public function put(string $uri, array $payload, array $headers = [], array $options = []): array
 ```
 
 **Parameters:**
 - `$uri` (string) - URL to access
 - `$payload` (array) - Data to send as JSON
 - `$headers` (array) - Additional HTTP headers
+- `$options` (array) - Additional cURL options (e.g., `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - Server's JSON response
@@ -190,13 +212,14 @@ Send JSON DELETE request.
 
 **Signature:**
 ```php
-public function delete(string $uri, array $payload = [], array $headers = []): array
+public function delete(string $uri, array $payload, array $headers = [], array $options = []): array
 ```
 
 **Parameters:**
 - `$uri` (string) - URL to access
 - `$payload` (array) - Data to send as JSON
 - `$headers` (array) - Additional HTTP headers
+- `$options` (array) - Additional cURL options (e.g., `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - Server's JSON response
@@ -215,7 +238,7 @@ Main function to send JSON HTTP request.
 
 **Signature:**
 ```php
-public function request(string $uri, string $method, array $payload, array $headers): array
+public function request(string $uri, string $method, array $payload, array $headers, array $options = []): array
 ```
 
 **Parameters:**
@@ -223,6 +246,7 @@ public function request(string $uri, string $method, array $payload, array $head
 - `$method` (string) - HTTP method (GET, POST, PUT, DELETE)
 - `$payload` (array) - Data to send
 - `$headers` (array) - Additional headers (`key => value`)
+- `$options` (array) - Additional cURL options (e.g., `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - JSON decoded response array, or:
@@ -238,12 +262,26 @@ public function request(string $uri, string $method, array $payload, array $head
   - SSL verification enabled in `production` or other environments (secure)
 - ✔ Checks for JSON decode errors
 - ✔ Returns all errors in a unified 'error' structure
+- ✔ Supports additional cURL options (e.g., `CURLOPT_HTTP_VERSION`, `CURLOPT_TIMEOUT`)
 
 **Environment Configuration:**
 ```bash
 # .env file or environment variable
 CODESAUR_APP_ENV=development  # or production
 ```
+
+**cURL Options:**
+
+Available HTTP version constants:
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| `CURL_HTTP_VERSION_NONE` | 0 | Let cURL decide |
+| `CURL_HTTP_VERSION_1_0` | 1 | HTTP/1.0 |
+| `CURL_HTTP_VERSION_1_1` | 2 | HTTP/1.1 |
+| `CURL_HTTP_VERSION_2_0` | 3 | HTTP/2 |
+| `CURL_HTTP_VERSION_2TLS` | 4 | HTTP/2 (HTTPS only) |
+| `CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE` | 5 | HTTP/2 without negotiate |
 
 ---
 

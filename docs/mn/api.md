@@ -105,13 +105,14 @@ JSON GET хүсэлт илгээх.
 
 **Signature:**
 ```php
-public function get(string $uri, array $payload = [], array $headers = []): array
+public function get(string $uri, array $payload = [], array $headers = [], array $options = []): array
 ```
 
 **Parameters:**
 - `$uri` (string) - Хандах URL
 - `$payload` (array) - Query string болгон нэмэгдэх өгөгдөл
 - `$headers` (array) - Нэмэлт HTTP headers (`name => value` хэлбэр)
+- `$options` (array) - Нэмэлт cURL options (жишээ нь: `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - Decode хийгдсэн JSON хариу эсвэл алдааны бүтэц
@@ -129,6 +130,14 @@ $response = $client->get(
 );
 
 print_r($response);
+
+// HTTP/1.1 хувилбар ашиглах (HTTP/2 алдаанаас сэргийлэх)
+$response = $client->get(
+    'https://httpbin.org/get',
+    ['test' => 'value'],
+    [],
+    [CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1]
+);
 ```
 
 ##### `post()`
@@ -137,13 +146,14 @@ JSON POST хүсэлт илгээх.
 
 **Signature:**
 ```php
-public function post(string $uri, array $payload, array $headers = []): array
+public function post(string $uri, array $payload, array $headers = [], array $options = []): array
 ```
 
 **Parameters:**
 - `$uri` (string) - Хандах URL
 - `$payload` (array) - JSON болгон илгээх өгөгдөл
 - `$headers` (array) - Нэмэлт HTTP headers
+- `$options` (array) - Нэмэлт cURL options (жишээ нь: `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - Серверийн JSON хариу
@@ -157,6 +167,17 @@ $response = $client->post(
 );
 
 echo $response['json']['test']; // codesaur
+
+// HTTP/1.1 хувилбар болон timeout тохируулах
+$response = $client->post(
+    'https://api.example.com/endpoint',
+    ['data' => 'value'],
+    ['Authorization' => 'Bearer token'],
+    [
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_TIMEOUT => 30
+    ]
+);
 ```
 
 ##### `put()`
@@ -165,13 +186,14 @@ JSON PUT хүсэлт илгээх.
 
 **Signature:**
 ```php
-public function put(string $uri, array $payload, array $headers = []): array
+public function put(string $uri, array $payload, array $headers = [], array $options = []): array
 ```
 
 **Parameters:**
 - `$uri` (string) - Хандах URL
 - `$payload` (array) - JSON болгон илгээх өгөгдөл
 - `$headers` (array) - Нэмэлт HTTP headers
+- `$options` (array) - Нэмэлт cURL options (жишээ нь: `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - Серверийн JSON хариу
@@ -190,13 +212,14 @@ JSON DELETE хүсэлт илгээх.
 
 **Signature:**
 ```php
-public function delete(string $uri, array $payload = [], array $headers = []): array
+public function delete(string $uri, array $payload, array $headers = [], array $options = []): array
 ```
 
 **Parameters:**
 - `$uri` (string) - Хандах URL
 - `$payload` (array) - JSON болгон илгээх өгөгдөл
 - `$headers` (array) - Нэмэлт HTTP headers
+- `$options` (array) - Нэмэлт cURL options (жишээ нь: `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - Серверийн JSON хариу
@@ -215,7 +238,7 @@ JSON HTTP хүсэлт илгээх үндсэн функц.
 
 **Signature:**
 ```php
-public function request(string $uri, string $method, array $payload, array $headers): array
+public function request(string $uri, string $method, array $payload, array $headers, array $options = []): array
 ```
 
 **Parameters:**
@@ -223,6 +246,7 @@ public function request(string $uri, string $method, array $payload, array $head
 - `$method` (string) - HTTP метод (GET, POST, PUT, DELETE)
 - `$payload` (array) - Илгээх өгөгдөл
 - `$headers` (array) - Нэмэлт headers (`key => value`)
+- `$options` (array) - Нэмэлт cURL options (жишээ нь: `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
 
 **Returns:**
 - `array` - JSON decode хийгдсэн хариу массив, эсвэл:
@@ -238,12 +262,26 @@ public function request(string $uri, string $method, array $payload, array $head
   - `production` эсвэл бусад орчинд SSL verify идэвхтэй (аюулгүй)
 - ✔ JSON decode алдааг шалгана
 - ✔ Бүх алдааг нэг мөрөөр 'error' бүтэц болгон буцаана
+- ✔ Нэмэлт cURL options дамжуулж болно (жишээ нь: `CURLOPT_HTTP_VERSION`, `CURLOPT_TIMEOUT`)
 
 **Environment Configuration:**
 ```bash
 # .env файл эсвэл environment variable
 CODESAUR_APP_ENV=development  # эсвэл production
 ```
+
+**cURL Options:**
+
+Боломжит HTTP хувилбарын утгууд:
+
+| Constant | Утга | Тайлбар |
+|----------|------|---------|
+| `CURL_HTTP_VERSION_NONE` | 0 | cURL-д өөрөө сонгуулах |
+| `CURL_HTTP_VERSION_1_0` | 1 | HTTP/1.0 |
+| `CURL_HTTP_VERSION_1_1` | 2 | HTTP/1.1 |
+| `CURL_HTTP_VERSION_2_0` | 3 | HTTP/2 |
+| `CURL_HTTP_VERSION_2TLS` | 4 | HTTP/2 (HTTPS-д зөвхөн) |
+| `CURL_HTTP_VERSION_2_PRIOR_KNOWLEDGE` | 5 | HTTP/2 negotiate-гүй |
 
 ---
 

@@ -171,17 +171,69 @@ class JSONClientTest extends TestCase
             'array' => [1, 2, 3],
             'object' => ['key' => 'value']
         ];
-        
+
         $response = $this->client->post(
             'https://httpbin.org/post',
             $payload
         );
-        
+
         $this->assertIsArray($response);
         // Сүлжээний алдаа гарч болзошгүй тул алдаа байвал skip хийх
         if (isset($response['error'])) {
             $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
         }
+        $this->assertEquals($payload, $response['json']);
+    }
+
+    /**
+     * cURL options дамжуулах тест (CURLOPT_HTTP_VERSION).
+     *
+     * HTTP/2 protocol-ийн алдаанаас сэргийлэхийн тулд
+     * CURLOPT_HTTP_VERSION тохируулж болдог.
+     */
+    public function testRequestWithCurlOptions(): void
+    {
+        // HTTP/1.1 хувилбар ашиглах
+        $response = $this->client->get(
+            'https://httpbin.org/get',
+            ['test' => 'options'],
+            [],
+            [\CURLOPT_HTTP_VERSION => \CURL_HTTP_VERSION_1_1]
+        );
+
+        $this->assertIsArray($response);
+        // Сүлжээний алдаа гарч болзошгүй тул алдаа байвал skip хийх
+        if (isset($response['error'])) {
+            $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
+        }
+        $this->assertArrayHasKey('args', $response);
+        $this->assertEquals('options', $response['args']['test']);
+    }
+
+    /**
+     * POST хүсэлтэд cURL options дамжуулах тест.
+     */
+    public function testPostRequestWithCurlOptions(): void
+    {
+        $payload = ['name' => 'codesaur', 'version' => '1.0'];
+
+        // HTTP/1.1 хувилбар болон timeout тохируулах
+        $response = $this->client->post(
+            'https://httpbin.org/post',
+            $payload,
+            ['X-Test-Header' => 'test-value'],
+            [
+                \CURLOPT_HTTP_VERSION => \CURL_HTTP_VERSION_1_1,
+                \CURLOPT_TIMEOUT => 30
+            ]
+        );
+
+        $this->assertIsArray($response);
+        // Сүлжээний алдаа гарч болзошгүй тул алдаа байвал skip хийх
+        if (isset($response['error'])) {
+            $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
+        }
+        $this->assertArrayHasKey('json', $response);
         $this->assertEquals($payload, $response['json']);
     }
 }

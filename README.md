@@ -120,6 +120,15 @@ $response = $client->post(
     ['test' => 'codesaur']
 );
 
+// HTTP/1.1 хувилбар ашиглах (HTTP/2 алдаанаас сэргийлэх)
+// Use HTTP/1.1 version (to prevent HTTP/2 errors)
+$response = $client->post(
+    'https://api.example.com/endpoint',
+    ['data' => 'value'],
+    ['Authorization' => 'Bearer token'],
+    [CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1]
+);
+
 // Хариуг хэвлэх / Print response
 print_r($response);
 ```
