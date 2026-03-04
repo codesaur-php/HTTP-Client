@@ -1,4 +1,4 @@
-# 📚 API Documentation
+# API Documentation
 
 Complete API documentation for the **codesaur/http-client** package.
 
@@ -6,7 +6,7 @@ Complete API documentation for the **codesaur/http-client** package.
 
 ---
 
-## 📦 Namespace
+## Namespace
 
 ```
 codesaur\Http\Client
@@ -14,7 +14,7 @@ codesaur\Http\Client
 
 ---
 
-## 🔧 Classes
+## Classes
 
 ### 1. CurlClient
 
@@ -255,14 +255,14 @@ public function request(string $uri, string $method, array $payload, array $head
   ```
 
 **Features:**
-- ✔ Automatically converts payload to JSON
-- ✔ Automatically adds Content-Type: application/json header
-- ✔ SSL verification depends on `CODESAUR_APP_ENV` environment variable:
+- Automatically converts payload to JSON
+- Automatically adds Content-Type: application/json header
+- SSL verification depends on `CODESAUR_APP_ENV` environment variable:
   - SSL verification disabled in `development` environment
   - SSL verification enabled in `production` or other environments (secure)
-- ✔ Checks for JSON decode errors
-- ✔ Returns all errors in a unified 'error' structure
-- ✔ Supports additional cURL options (e.g., `CURLOPT_HTTP_VERSION`, `CURLOPT_TIMEOUT`)
+- Checks for JSON decode errors
+- Returns all errors in a unified 'error' structure
+- Supports additional cURL options (e.g., `CURLOPT_HTTP_VERSION`, `CURLOPT_TIMEOUT`)
 
 **Environment Configuration:**
 ```bash
@@ -294,9 +294,9 @@ Lightweight email client class for sending MIME standard emails with attachments
 **Features:**
 - Manage To / Cc / Bcc recipients
 - Support for inline and various types of attachments:
-  - file path → `addFileAttachment()`
-  - URL → `addUrlAttachment()`
-  - raw content → `addContentAttachment()`
+  - file path -> `addFileAttachment()`
+  - URL -> `addUrlAttachment()`
+  - raw content -> `addContentAttachment()`
 - Send HTML and plaintext emails
 - Full UTF-8 encoded header & filename support
 - Automatically generates MIME multipart emails
@@ -709,7 +709,7 @@ $mail->sendMail();
 
 ---
 
-## 🔄 Fluent Interface
+## Fluent Interface
 
 The Mail class supports fluent interface, as many methods return `$this`:
 
@@ -728,7 +728,7 @@ $mail
 
 ---
 
-## ⚠️ Exceptions
+## Exceptions
 
 ### CurlClient
 
@@ -748,11 +748,11 @@ In case of errors, instead of throwing an Exception, it returns an error structu
 
 ---
 
-## 📝 Notes
+## Notes
 
 1. **SSL Verification:** JSONClient configures SSL verification based on the `CODESAUR_APP_ENV` environment variable:
-   - `development` → SSL verification disabled
-   - `production` or others → SSL verification enabled (default)
+   - `development` -> SSL verification disabled
+   - `production` or others -> SSL verification enabled (default)
 
 2. **UTF-8 Support:** Mail class has full UTF-8 support (names, file names, headers, etc.)
 
@@ -762,7 +762,7 @@ In case of errors, instead of throwing an Exception, it returns an error structu
 
 ---
 
-## 📄 License
+## License
 
 MIT License
 

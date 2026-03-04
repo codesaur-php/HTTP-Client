@@ -1,21 +1,21 @@
-# 🦖 codesaur/http-client
+# codesaur/http-client
 
 A lightweight, object-oriented HTTP client component for sending HTTP requests and processing/sending MIME emails.
 
 ---
 
-## ✨ Key Features
+## Key Features
 
-- ✔ **CurlClient** - Flexible HTTP client based on cURL  
-- ✔ **JSONClient** - Convenient for working with REST APIs with JSON data  
-- ✔ **Mail** - MIME email sender with HTML + Text + multiple attachments  
-- ✔ Full UTF-8 support (names, file names, headers, etc.)  
-- ✔ Lightweight, fast, can be used on any framework or standalone  
-- ✔ Only requires `ext-curl` and `ext-json`  
+- **CurlClient** - Flexible HTTP client based on cURL  
+- **JSONClient** - Convenient for working with REST APIs with JSON data  
+- **Mail** - MIME email sender with HTML + Text + multiple attachments  
+- Full UTF-8 support (names, file names, headers, etc.)  
+- Lightweight, fast, can be used on any framework or standalone  
+- Only requires `ext-curl` and `ext-json`  
 
 ---
 
-## 📦 Installation
+## Installation
 
 ```bash
 composer require codesaur/http-client
@@ -23,7 +23,7 @@ composer require codesaur/http-client
 
 ---
 
-# 📡 1. CurlClient - General HTTP Client
+# 1. CurlClient - General HTTP Client
 
 ```php
 use codesaur\Http\Client\CurlClient;
@@ -40,7 +40,7 @@ echo $response;
 
 ---
 
-# 🧩 2. JSONClient - Working with JSON APIs
+# 2. JSONClient - Working with JSON APIs
 
 **Note:** JSONClient configures SSL verification based on the `CODESAUR_APP_ENV` environment variable:
 - SSL verification is disabled in `development` environment (suitable for development)
@@ -87,7 +87,7 @@ echo $response['json']['test']; // codesaur
 
 ---
 
-# ✉ 3. Mail - MIME HTML + Attachment Email Client
+# 3. Mail - MIME HTML + Attachment Email Client
 
 ### Sending Simple HTML Email
 
@@ -122,7 +122,7 @@ $mail->addBCCRecipient('c@example.com', 'Person C');
 
 ---
 
-## 🧪 Running Tests
+## Running Tests
 
 ### Composer Test Commands
 
@@ -173,28 +173,28 @@ vendor/bin/phpunit --coverage-html coverage
 
 ---
 
-# 🔄 CI/CD Pipeline
+# CI/CD Pipeline
 
 This project has a CI/CD pipeline using GitHub Actions:
 
-- ✅ **Automated Tests** - Tests run on Push or Pull Request
-- ✅ **Multiple PHP Versions** - Tests on PHP 8.2, 8.3
-- ✅ **Multiple OS** - Tests on Ubuntu and Windows
-- ✅ **Code Coverage** - Generates coverage information on Pull Request
-- ✅ **Security Check** - Runs Composer audit
-- ✅ **Code Linting** - Checks PHP syntax
+- **Automated Tests** - Tests run on Push or Pull Request
+- **Multiple PHP Versions** - Tests on PHP 8.2, 8.3
+- **Multiple OS** - Tests on Ubuntu and Windows
+- **Code Coverage** - Generates coverage information on Pull Request
+- **Security Check** - Runs Composer audit
+- **Code Linting** - Checks PHP syntax
 
 CI/CD pipeline details: [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
 ---
 
-# 📄 License
+# License
 
 This project is licensed under the MIT License.
 
 ---
 
-# 👨‍💻 Author
+# Author
 
 Narankhuu  
 https://github.com/codesaur

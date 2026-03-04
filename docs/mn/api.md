@@ -1,4 +1,4 @@
-# 📚 API Documentation
+# API Documentation
 
 **codesaur/http-client** пакетийн бүрэн API баримт бичиг.
 
@@ -6,7 +6,7 @@
 
 ---
 
-## 📦 Namespace
+## Namespace
 
 ```
 codesaur\Http\Client
@@ -14,7 +14,7 @@ codesaur\Http\Client
 
 ---
 
-## 🔧 Classes
+## Classes
 
 ### 1. CurlClient
 
@@ -255,14 +255,14 @@ public function request(string $uri, string $method, array $payload, array $head
   ```
 
 **Features:**
-- ✔ Payload-ийг автоматаар JSON болгоно
-- ✔ Content-Type: application/json header автоматаар нэмнэ
-- ✔ SSL verify нь `CODESAUR_APP_ENV` environment variable-аас хамаарна:
+- Payload-ийг автоматаар JSON болгоно
+- Content-Type: application/json header автоматаар нэмнэ
+- SSL verify нь `CODESAUR_APP_ENV` environment variable-аас хамаарна:
   - `development` орчинд SSL verify унтраалттай
   - `production` эсвэл бусад орчинд SSL verify идэвхтэй (аюулгүй)
-- ✔ JSON decode алдааг шалгана
-- ✔ Бүх алдааг нэг мөрөөр 'error' бүтэц болгон буцаана
-- ✔ Нэмэлт cURL options дамжуулж болно (жишээ нь: `CURLOPT_HTTP_VERSION`, `CURLOPT_TIMEOUT`)
+- JSON decode алдааг шалгана
+- Бүх алдааг нэг мөрөөр 'error' бүтэц болгон буцаана
+- Нэмэлт cURL options дамжуулж болно (жишээ нь: `CURLOPT_HTTP_VERSION`, `CURLOPT_TIMEOUT`)
 
 **Environment Configuration:**
 ```bash
@@ -294,9 +294,9 @@ PHP-ийн `mail()` функцийг ашиглан MIME стандарттай,
 **Онцлогууд:**
 - To / Cc / Bcc хүлээн авагчид удирдах
 - Элгэн (inline) болон олон төрлийн хавсралт дэмжих:
-  - file path → `addFileAttachment()`
-  - URL → `addUrlAttachment()`
-  - raw content → `addContentAttachment()`
+  - file path -> `addFileAttachment()`
+  - URL -> `addUrlAttachment()`
+  - raw content -> `addContentAttachment()`
 - HTML болон plaintext имэйл илгээх
 - UTF-8 encoded header & filename бүрэн дэмжлэг
 - MIME multipart имэйл автоматаар үүсгэнэ
@@ -709,7 +709,7 @@ $mail->sendMail();
 
 ---
 
-## 🔄 Fluent Interface
+## Fluent Interface
 
 Mail класс нь fluent interface дэмжиж байна, учир нь олон method-ууд `$this` буцаана:
 
@@ -728,7 +728,7 @@ $mail
 
 ---
 
-## ⚠️ Exceptions
+## Exceptions
 
 ### CurlClient
 
@@ -748,11 +748,11 @@ $mail
 
 ---
 
-## 📝 Notes
+## Notes
 
 1. **SSL Verification:** JSONClient нь `CODESAUR_APP_ENV` environment variable-аас хамааруулан SSL verify-ийг тохируулна:
-   - `development` → SSL verify унтраалттай
-   - `production` эсвэл бусад → SSL verify идэвхтэй (default)
+   - `development` -> SSL verify унтраалттай
+   - `production` эсвэл бусад -> SSL verify идэвхтэй (default)
 
 2. **UTF-8 Support:** Mail класс нь UTF-8 бүрэн дэмжлэгтэй (нэрс, файлын нэр, гарчиг г.м.)
 
@@ -762,7 +762,7 @@ $mail
 
 ---
 
-## 📄 License
+## License
 
 MIT License
 

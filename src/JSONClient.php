@@ -119,13 +119,13 @@ class JSONClient
      * Энэ функц нь CurlClient ашиглан хүсэлт илгээж,
      * JSON хариуг PHP массив болгон decode хийн буцаана.
      *
-     * ✔ Payload-ийг автоматаар JSON болгоно
-     * ✔ Content-Type: application/json header автоматаар нэмнэ
-     * ✔ SSL verify нь CODESAUR_APP_ENV environment variable-аас хамаарна:
+     * - Payload-ийг автоматаар JSON болгоно
+     * - Content-Type: application/json header автоматаар нэмнэ
+     * - SSL verify нь CODESAUR_APP_ENV environment variable-аас хамаарна:
      *      - development орчинд SSL verify унтраалттай
      *      - production эсвэл бусад орчинд SSL verify идэвхтэй (аюулгүй)
-     * ✔ JSON decode алдааг шалгана
-     * ✔ Бүх алдааг нэг мөрөөр 'error' бүтэц болгон буцаана
+     * - JSON decode алдааг шалгана
+     * - Бүх алдааг нэг мөрөөр 'error' бүтэц болгон буцаана
      *
      * @param string $uri
      *      Хүсэлт илгээх URL.

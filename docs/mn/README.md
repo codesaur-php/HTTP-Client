@@ -1,21 +1,21 @@
-# 🦖 codesaur/http-client  
+# codesaur/http-client
 
 HTTP хүсэлт илгээх болон MIME имэйл боловсруулах/илгээх энгийн хөнгөн жинтэй, объект хандалтат http-client компонент.
 
 ---
 
-## ✨ Онцлох боломжууд
+## Онцлох боломжууд
 
-- ✔ **CurlClient** - cURL дээр суурилсан уян хатан HTTP клиент  
-- ✔ **JSONClient** - JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой  
-- ✔ **Mail** - HTML + Text + олон хавсралттай MIME имэйл илгээгч  
-- ✔ UTF-8 бүрэн дэмжлэг (нэрс, файлын нэр, гарчиг г.м.)  
-- ✔ Хөнгөн, хурдан, ямар ч фрэймворк дээр эсвэл дангаар ашиглаж болно  
-- ✔ Зөвхөн `ext-curl`, `ext-json` байхад л болно  
+- **CurlClient** - cURL дээр суурилсан уян хатан HTTP клиент  
+- **JSONClient** - JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой  
+- **Mail** - HTML + Text + олон хавсралттай MIME имэйл илгээгч  
+- UTF-8 бүрэн дэмжлэг (нэрс, файлын нэр, гарчиг г.м.)  
+- Хөнгөн, хурдан, ямар ч фрэймворк дээр эсвэл дангаар ашиглаж болно  
+- Зөвхөн `ext-curl`, `ext-json` байхад л болно  
 
 ---
 
-## 📦 Суурилуулалт
+## Суурилуулалт
 
 ```bash
 composer require codesaur/http-client
@@ -23,7 +23,7 @@ composer require codesaur/http-client
 
 ---
 
-# 📡 1. CurlClient - Ерөнхий HTTP клиент
+# 1. CurlClient - Ерөнхий HTTP клиент
 
 ```php
 use codesaur\Http\Client\CurlClient;
@@ -40,7 +40,7 @@ echo $response;
 
 ---
 
-# 🧩 2. JSONClient - JSON API-тэй ажиллах
+# 2. JSONClient - JSON API-тэй ажиллах
 
 **Анхаар:** JSONClient нь `CODESAUR_APP_ENV` environment variable-аас хамааруулан SSL verify-ийг тохируулна:
 - `development` орчинд SSL verify унтраалттай (хөгжүүлэлтэд тохиромжтой)
@@ -87,7 +87,7 @@ echo $response['json']['test']; // codesaur
 
 ---
 
-# ✉ 3. Mail - MIME HTML + Хавсралттай имэйл клиент
+# 3. Mail - MIME HTML + Хавсралттай имэйл клиент
 
 ### Энгийн HTML имэйл илгээх
 
@@ -122,7 +122,7 @@ $mail->addBCCRecipient('c@example.com', 'Хүн С');
 
 ---
 
-## 🧪 Тест ажиллуулах
+## Тест ажиллуулах
 
 ### Composer Test Command-ууд
 
@@ -174,28 +174,28 @@ vendor/bin/phpunit --coverage-html coverage
 
 ---
 
-# 🔄 CI/CD Pipeline
+# CI/CD Pipeline
 
 Энэ төсөл нь GitHub Actions ашиглан CI/CD pipeline-тэй:
 
-- ✅ **Автомат тест** - Push эсвэл Pull Request үед тест ажиллуулна
-- ✅ **Олон PHP хувилбар** - PHP 8.2, 8.3 дээр шалгана
-- ✅ **Олон OS** - Ubuntu болон Windows дээр шалгана
-- ✅ **Code Coverage** - Pull Request үед coverage мэдээлэл үүсгэнэ
-- ✅ **Security Check** - Composer audit ажиллуулна
-- ✅ **Code Linting** - PHP syntax шалгана
+- **Автомат тест** - Push эсвэл Pull Request үед тест ажиллуулна
+- **Олон PHP хувилбар** - PHP 8.2, 8.3 дээр шалгана
+- **Олон OS** - Ubuntu болон Windows дээр шалгана
+- **Code Coverage** - Pull Request үед coverage мэдээлэл үүсгэнэ
+- **Security Check** - Composer audit ажиллуулна
+- **Code Linting** - PHP syntax шалгана
 
 CI/CD pipeline-ийн дэлгэрэнгүй мэдээлэл: [.github/workflows/ci.yml](.github/workflows/ci.yml)
 
 ---
 
-# 📄 Лиценз
+# Лиценз
 
 Энэ төсөл MIT лицензтэй.
 
 ---
 
-# 👨‍💻 Зохиогч
+# Зохиогч
 
 Narankhuu  
 https://github.com/codesaur  

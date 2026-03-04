@@ -1,4 +1,4 @@
-# 🦖 codesaur/http-client
+# codesaur/http-client
 
 [![CI](https://github.com/codesaur-php/HTTP-Client/actions/workflows/ci.yml/badge.svg)](https://github.com/codesaur-php/HTTP-Client/actions)
 [![PHP Version](https://img.shields.io/badge/php-%5E8.2.1-777BB4.svg?logo=php)](https://www.php.net/)
@@ -27,15 +27,15 @@ HTTP хүсэлт илгээх болон MIME имэйл боловсруула
 
 ### Онцлох боломжууд
 
-- ✔ UTF-8 бүрэн дэмжлэг (нэрс, файлын нэр, гарчиг г.м.)  
-- ✔ Хөнгөн, хурдан, ямар ч фрэймворк дээр эсвэл дангаар ашиглаж болно  
-- ✔ Зөвхөн `ext-curl`, `ext-json` байхад л болно  
+- UTF-8 бүрэн дэмжлэг (нэрс, файлын нэр, гарчиг г.м.)  
+- Хөнгөн, хурдан, ямар ч фрэймворк дээр эсвэл дангаар ашиглаж болно  
+- Зөвхөн `ext-curl`, `ext-json` байхад л болно  
 
 ### Дэлгэрэнгүй мэдээлэл
 
-- 📖 [Бүрэн танилцуулга](docs/mn/README.md) - Суурилуулалт, хэрэглээ, жишээнүүд
-- 📚 [API тайлбар](docs/mn/api.md) - Бүх метод, exception-үүдийн тайлбар
-- 🔍 [Шалгалтын тайлан](docs/mn/review.md) - Код шалгалтын тайлан
+- [Бүрэн танилцуулга](docs/mn/README.md) - Суурилуулалт, хэрэглээ, жишээнүүд
+- [API тайлбар](docs/mn/api.md) - Бүх метод, exception-үүдийн тайлбар
+- [Шалгалтын тайлан](docs/mn/review.md) - Код шалгалтын тайлан
 
 ---
 
@@ -51,15 +51,15 @@ The package consists of the following 3 core classes:
 
 ### Key Features
 
-- ✔ Full UTF-8 support (names, file names, headers, etc.)  
-- ✔ Lightweight, fast, can be used on any framework or standalone  
-- ✔ Only requires `ext-curl` and `ext-json`  
+- Full UTF-8 support (names, file names, headers, etc.)  
+- Lightweight, fast, can be used on any framework or standalone  
+- Only requires `ext-curl` and `ext-json`  
 
 ### Documentation
 
-- 📖 [Full Documentation](docs/en/README.md) - Installation, usage, examples
-- 📚 [API Reference](docs/en/api.md) - Complete API documentation
-- 🔍 [Review](docs/en/review.md) - Complete package review and code quality assessment
+- [Full Documentation](docs/en/README.md) - Installation, usage, examples
+- [API Reference](docs/en/api.md) - Complete API documentation
+- [Review](docs/en/review.md) - Complete package review and code quality assessment
 
 ---
 
@@ -181,12 +181,12 @@ composer test:coverage
 
 ## Changelog
 
-- 📝 [CHANGELOG.md](CHANGELOG.md) - Full version history
+- [CHANGELOG.md](CHANGELOG.md) - Full version history
 
 ## Contributing & Security
 
-- 🤝 [Contributing Guide](.github/CONTRIBUTING.md)
-- 🔐 [Security Policy](.github/SECURITY.md)
+- [Contributing Guide](.github/CONTRIBUTING.md)
+- [Security Policy](.github/SECURITY.md)
 
 ## License
 
@@ -195,7 +195,7 @@ This project is licensed under the MIT License.
 ## Author
 
 **Narankhuu**  
-📧 codesaur@gmail.com  
-🌐 https://github.com/codesaur
+codesaur@gmail.com  
+https://github.com/codesaur
 
-🦖 **codesaur ecosystem:** https://codesaur.net
+**codesaur ecosystem:** https://codesaur.net

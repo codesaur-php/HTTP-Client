@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [2.0.3] - 2026-03-04
+[2.0.3]: https://github.com/codesaur-php/HTTP-Client/compare/v2.0.2...v2.0.3
+
+### Changed
+- Removed all emoji characters from documentation and source files (README, docs, PHPDoc comments)
+- Fixed Mongolian text capitalization errors (e.g., `Нийт Тестийн Статистик` -> `Нийт тестийн статистик`)
+
+---
+
 ## [2.0.2] - 2026-01-20
 [2.0.2]: https://github.com/codesaur-php/HTTP-Client/compare/v2.0.1...v2.0.2
 
