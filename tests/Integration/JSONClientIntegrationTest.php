@@ -41,12 +41,12 @@ class JSONClientIntegrationTest extends TestCase
             'https://httpbin.org/get',
             ['integration' => 'test', 'number' => 42]
         );
-        
+
         $this->assertIsArray($response);
         if (isset($response['error'])) {
             $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
         }
-        
+
         $this->assertArrayHasKey('args', $response);
         $this->assertEquals('test', $response['args']['integration']);
         $this->assertEquals('42', $response['args']['number']);
@@ -62,17 +62,17 @@ class JSONClientIntegrationTest extends TestCase
             'type' => 'json',
             'data' => ['key' => 'value']
         ];
-        
+
         $response = $this->client->post(
             'https://httpbin.org/post',
             $payload
         );
-        
+
         $this->assertIsArray($response);
         if (isset($response['error'])) {
             $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
         }
-        
+
         $this->assertArrayHasKey('json', $response);
         $this->assertEquals('Integration Test', $response['json']['name']);
         $this->assertEquals('json', $response['json']['type']);
@@ -88,17 +88,17 @@ class JSONClientIntegrationTest extends TestCase
             'status' => 'updated',
             'timestamp' => \time()
         ];
-        
+
         $response = $this->client->put(
             'https://httpbin.org/put',
             $payload
         );
-        
+
         $this->assertIsArray($response);
         if (isset($response['error'])) {
             $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
         }
-        
+
         $this->assertArrayHasKey('json', $response);
         $this->assertEquals(1, $response['json']['id']);
     }
@@ -109,12 +109,12 @@ class JSONClientIntegrationTest extends TestCase
     public function testRealDeleteRequest(): void
     {
         $payload = ['id' => 123, 'reason' => 'integration-test'];
-        
+
         $response = $this->client->delete(
             'https://httpbin.org/delete',
             $payload
         );
-        
+
         $this->assertIsArray($response);
         if (isset($response['error'])) {
             $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
@@ -131,18 +131,18 @@ class JSONClientIntegrationTest extends TestCase
             'Authorization' => 'Bearer test-token-123',
             'X-Custom-Header' => 'integration-value'
         ];
-        
+
         $response = $this->client->get(
             'https://httpbin.org/headers',
             [],
             $headers
         );
-        
+
         $this->assertIsArray($response);
         if (isset($response['error'])) {
             $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
         }
-        
+
         $this->assertArrayHasKey('headers', $response);
         $responseString = \json_encode($response);
         $this->assertStringContainsString('integration-test', \strtolower($responseString));
@@ -167,17 +167,17 @@ class JSONClientIntegrationTest extends TestCase
                 ]
             ]
         ];
-        
+
         $response = $this->client->post(
             'https://httpbin.org/post',
             $payload
         );
-        
+
         $this->assertIsArray($response);
         if (isset($response['error'])) {
             $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
         }
-        
+
         $this->assertArrayHasKey('json', $response);
         $this->assertEquals($payload, $response['json']);
     }
@@ -191,7 +191,7 @@ class JSONClientIntegrationTest extends TestCase
             'https://invalid-domain-that-does-not-exist-12345.com',
             []
         );
-        
+
         $this->assertIsArray($response);
         $this->assertArrayHasKey('error', $response);
         $this->assertArrayHasKey('code', $response['error']);
@@ -208,7 +208,7 @@ class JSONClientIntegrationTest extends TestCase
             ['method' => 'get', 'payload' => ['test' => 2]],
             ['method' => 'get', 'payload' => ['test' => 3]]
         ];
-        
+
         $responses = [];
         foreach ($requests as $request) {
             $responses[] = $this->client->get(
@@ -216,7 +216,7 @@ class JSONClientIntegrationTest extends TestCase
                 $request['payload']
             );
         }
-        
+
         $this->assertCount(3, $responses);
         foreach ($responses as $response) {
             $this->assertIsArray($response);
@@ -233,12 +233,12 @@ class JSONClientIntegrationTest extends TestCase
     {
         // Development орчинд тохируулах
         \putenv('CODESAUR_APP_ENV=development');
-        
+
         // Шинэ client үүсгэх (environment variable унших)
         $devClient = new JSONClient();
-        
+
         $response = $devClient->get('https://httpbin.org/get', []);
-        
+
         $this->assertIsArray($response);
         // Development орчинд SSL verify унтраалттай тул амжилттай эсвэл алдаа гарч болно
         // Гэхдээ алдааны бүтэц зөв байх ёстой
@@ -246,7 +246,7 @@ class JSONClientIntegrationTest extends TestCase
             $this->assertArrayHasKey('code', $response['error']);
             $this->assertArrayHasKey('message', $response['error']);
         }
-        
+
         // Environment variable устгах
         \putenv('CODESAUR_APP_ENV');
     }

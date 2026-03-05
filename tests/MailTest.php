@@ -37,7 +37,7 @@ class MailTest extends TestCase
     public function testTargetTo(): void
     {
         $result = $this->mail->targetTo('test@example.com', 'Тест Нэр');
-        
+
         $this->assertSame($this->mail, $result);
         $recipients = $this->mail->getRecipients('To');
         $this->assertCount(1, $recipients);
@@ -52,7 +52,7 @@ class MailTest extends TestCase
     {
         $this->mail->addRecipient('user1@example.com', 'Хэрэглэгч 1');
         $this->mail->addRecipient('user2@example.com');
-        
+
         $recipients = $this->mail->getRecipients('To');
         $this->assertCount(2, $recipients);
         $this->assertEquals('user1@example.com', $recipients[0]['email']);
@@ -65,7 +65,7 @@ class MailTest extends TestCase
     public function testAddCCRecipient(): void
     {
         $this->mail->addCCRecipient('cc@example.com', 'CC Нэр');
-        
+
         $recipients = $this->mail->getRecipients('Cc');
         $this->assertCount(1, $recipients);
         $this->assertEquals('cc@example.com', $recipients[0]['email']);
@@ -77,7 +77,7 @@ class MailTest extends TestCase
     public function testAddBCCRecipient(): void
     {
         $this->mail->addBCCRecipient('bcc@example.com', 'BCC Нэр');
-        
+
         $recipients = $this->mail->getRecipients('Bcc');
         $this->assertCount(1, $recipients);
         $this->assertEquals('bcc@example.com', $recipients[0]['email']);
@@ -89,7 +89,7 @@ class MailTest extends TestCase
     public function testAddRecipientWithInvalidEmail(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         $this->mail->addRecipient('invalid-email');
     }
 
@@ -99,7 +99,7 @@ class MailTest extends TestCase
     public function testSetSubject(): void
     {
         $result = $this->mail->setSubject('Тест гарчиг');
-        
+
         $this->assertSame($this->mail, $result);
     }
 
@@ -109,7 +109,7 @@ class MailTest extends TestCase
     public function testSetMessage(): void
     {
         $result = $this->mail->setMessage('Тест мессеж');
-        
+
         $this->assertSame($this->mail, $result);
     }
 
@@ -119,7 +119,7 @@ class MailTest extends TestCase
     public function testSetFrom(): void
     {
         $result = $this->mail->setFrom('sender@example.com', 'Илгээгч');
-        
+
         $this->assertSame($this->mail, $result);
     }
 
@@ -129,7 +129,7 @@ class MailTest extends TestCase
     public function testSetFromWithInvalidEmail(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         $this->mail->setFrom('invalid-email');
     }
 
@@ -139,7 +139,7 @@ class MailTest extends TestCase
     public function testSetReplyTo(): void
     {
         $result = $this->mail->setReplyTo('reply@example.com', 'Хариу');
-        
+
         $this->assertSame($this->mail, $result);
     }
 
@@ -149,7 +149,7 @@ class MailTest extends TestCase
     public function testSetReplyToWithInvalidEmail(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         $this->mail->setReplyTo('invalid-email');
     }
 
@@ -161,14 +161,14 @@ class MailTest extends TestCase
         // Тест файл үүсгэх
         $testFile = \sys_get_temp_dir() . '/test_attachment.txt';
         \file_put_contents($testFile, 'Тест агуулга');
-        
+
         $result = $this->mail->addFileAttachment($testFile);
-        
+
         $this->assertSame($this->mail, $result);
         $attachments = $this->mail->getAttachments();
         $this->assertCount(1, $attachments);
         $this->assertArrayHasKey('path', $attachments[0]);
-        
+
         // Тест файл устгах
         \unlink($testFile);
     }
@@ -179,7 +179,7 @@ class MailTest extends TestCase
     public function testAddFileAttachmentWithNonExistentFile(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         $this->mail->addFileAttachment('/path/to/non/existent/file.txt');
     }
 
@@ -189,7 +189,7 @@ class MailTest extends TestCase
     public function testAddContentAttachment(): void
     {
         $result = $this->mail->addContentAttachment('Тест агуулга', 'test.txt');
-        
+
         $this->assertSame($this->mail, $result);
         $attachments = $this->mail->getAttachments();
         $this->assertCount(1, $attachments);
@@ -203,7 +203,7 @@ class MailTest extends TestCase
     public function testAddContentAttachmentWithEmptyContent(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         $this->mail->addContentAttachment('', 'test.txt');
     }
 
@@ -215,13 +215,13 @@ class MailTest extends TestCase
         // Тест файл үүсгэх
         $testFile = \sys_get_temp_dir() . '/test_clear.txt';
         \file_put_contents($testFile, 'test');
-        
+
         $this->mail->addFileAttachment($testFile);
         $this->assertCount(1, $this->mail->getAttachments());
-        
+
         $this->mail->clearAttachments();
         $this->assertCount(0, $this->mail->getAttachments());
-        
+
         \unlink($testFile);
     }
 
@@ -242,9 +242,9 @@ class MailTest extends TestCase
                 ['email' => 'bcc@example.com']
             ]
         ];
-        
+
         $this->mail->addRecipients($recipients);
-        
+
         $this->assertCount(2, $this->mail->getRecipients('To'));
         $this->assertCount(1, $this->mail->getRecipients('Cc'));
         $this->assertCount(1, $this->mail->getRecipients('Bcc'));
@@ -256,13 +256,13 @@ class MailTest extends TestCase
     public function testSendMailWithoutRequiredFields(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        
+
         $this->mail->sendMail();
     }
 
     /**
      * sendMail() функц - зөв тохиргоотой тест.
-     * 
+     *
      * Анхаар: Энэ тест нь бодит имэйл илгээхгүй, зөвхөн тохиргоо шалгана.
      * Бодит илгээлт хийхийн тулд SMTP сервер тохируулах шаардлагатай.
      */
@@ -272,7 +272,7 @@ class MailTest extends TestCase
         $this->mail->setFrom('sender@example.com', 'Илгээгч');
         $this->mail->setSubject('Тест гарчиг');
         $this->mail->setMessage('Тест мессеж');
-        
+
         // assertValues() алдаа гаргахгүй эсэхийг шалгах
         // (бодит илгээлт хийхгүй, зөвхөн тохиргоо шалгана)
         $this->assertTrue(true);

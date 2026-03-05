@@ -6,7 +6,7 @@ namespace codesaur\Http\Client;
  * Class CurlClient
  *
  * HTTP хүсэлт илгээх зориулалттай хөнгөн жинтэй cURL клиент.
- * 
+ *
  * Энэ класс нь хүссэн URL рүү дурын HTTP методоор (`GET`, `POST`,
  * `PUT`, `DELETE` гэх мэт) хүсэлт илгээж, серверийн хариуг
  * текст хэлбэрээр буцаана.
@@ -22,25 +22,25 @@ class CurlClient
      * буцаасан хариуг (response body) текст хэлбэрээр буцаана.
      * Хэрэв сүлжээний алдаа гарвал Exception үүсгэнэ.
      *
-     * @param string $uri  
+     * @param string $uri
      *      Хүсэлт илгээх URL эсвэл endpoint.
      *
-     * @param string $method  
+     * @param string $method
      *      Хэрэглэх HTTP метод (анхдагч - `GET`).
      *
-     * @param string $data  
+     * @param string $data
      *      Хүсэлттэй хамт илгээх өгөгдөл. Хэрэв хоосон биш бол
      *      `CURLOPT_POSTFIELDS` тохиргоонд автоматаар нэмэгдэнэ.
      *
-     * @param array<int|string, mixed> $options  
+     * @param array<int|string, mixed> $options
      *      cURL-ийн нэмэлт тохиргоонууд. Жишээ нь:
      *      - `CURLOPT_TIMEOUT => 10`
      *      - `CURLOPT_HTTPHEADER => ['Content-Type: application/json']`
      *
-     * @return string  
+     * @return string
      *      Серверийн хариу (response body) зөв гүйцэтгэлтэй үед.
      *
-     * @throws \Exception  
+     * @throws \Exception
      *      cURL гүйцэтгэх явцад алдаа гарвал `Exception` үүсгэнэ.
      *      Алдааны код нь `curl_errno()`, алдааны текст нь
      *      `curl_error()`-ийн утга байна.
@@ -71,12 +71,12 @@ class CurlClient
         if ($response === false) {
             $code = \curl_errno($ch);
             $message = \curl_error($ch);
-            
+
             \curl_close($ch);
-            
+
             throw new \Exception($message, $code);
         }
-        
+
         \curl_close($ch);
 
         return $response;

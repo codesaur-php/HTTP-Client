@@ -14,7 +14,7 @@ namespace codesaur\Http\Client\Example;
  *  - Raw агуулгыг файлын нэртэй нь хавсаргах (addContentAttachment)
  *  - UTF-8 кодчилолтой Монгол текст илгээхэд бүрэн тохиромжтой
  *
- * DEV: v2.2023.09.17
+ * @since v2.0.0
  */
 
 \ini_set('display_errors', 'On');

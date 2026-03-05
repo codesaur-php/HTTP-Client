@@ -222,7 +222,7 @@ class Mail
      *
      * @return array
      *      Хүлээн авагчдын жагсаалт, эсвэл хоосон массив.
-     *      
+     *
      *      Жишээ буцаах утга:
      *      ```php
      *      [
@@ -231,7 +231,7 @@ class Mail
      *          ['email' => 'user3@example.com', 'name' => 'Нэр 3']
      *      ]
      *      ```
-     *      
+     *
      *      Хэрэв хүлээн авагч байхгүй бол хоосон массив буцаана:
      *      ```php
      *      []
@@ -556,9 +556,9 @@ class Mail
     public function sendMail(): bool
     {
         $this->assertValues();
-        
+
         \mb_internal_encoding('UTF-8');
-        
+
         if (\str_contains($this->message, '</')) {
             $content_type = 'text/html';
             $content_encoding = "Content-Transfer-Encoding: base64\r\n";
@@ -592,7 +592,7 @@ class Mail
         } else {
             $replyTo = $from;
         }
-        
+
         $headers = "MIME-Version: 1.0\r\n";
         $headers .= 'Date: ' . \date('r (T)') . "\r\n";
         $headers .= "From: $from\r\n";
@@ -604,7 +604,7 @@ class Mail
         }
         $headers .= "Reply-To: $replyTo\r\n";
         $headers .= 'X-Mailer: PHP/' . \phpversion() . "\r\n";
-        
+
         if (!$is_attached) {
             $headers .= $content_encoding;
             $headers .= "Content-Type: $content_type; charset=\"utf-8\"";
@@ -644,7 +644,7 @@ class Mail
             }
             $message .= "--$mime_boundary--";
         }
-        
+
         $recipient = \implode(",", $toAddresses);
         if (\mail($recipient, $subject, $message, $headers)) {
             return true;

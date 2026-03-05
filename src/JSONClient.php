@@ -6,7 +6,7 @@ namespace codesaur\Http\Client;
  * Class JSONClient
  *
  * JSON суурьтай HTTP хүсэлтүүд илгээх зориулалттай клиент.
- * 
+ *
  * Энэхүү класс нь CurlClient дээр суурилан ажилладаг бөгөөд
  * JSON payload-той GET, POST, PUT, DELETE хүсэлтүүдийг
  * хялбараар илгээж, серверийн хариуг PHP массив хэлбэрээр буцаана.
@@ -169,7 +169,7 @@ class JSONClient
             ], $options);
             $curlOptions[\CURLOPT_HTTPHEADER] = $header;
 
-            $isGet = \strtoupper($method) == 'GET';            
+            $isGet = \strtoupper($method) == 'GET';
             // GET хүсэлтэд query параметрүүдийг URL-д query string хэлбэрээр нэмнэ
             if ($isGet && !empty($payload)) {
                 $queryString = \http_build_query($payload);

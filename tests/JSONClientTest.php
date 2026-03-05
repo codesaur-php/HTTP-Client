@@ -39,7 +39,7 @@ class JSONClientTest extends TestCase
             'https://httpbin.org/get',
             ['test' => 'value', 'number' => 123]
         );
-        
+
         $this->assertIsArray($response);
         // Сүлжээний алдаа гарч болзошгүй тул алдаа байвал skip хийх
         if (isset($response['error'])) {
@@ -58,7 +58,7 @@ class JSONClientTest extends TestCase
             'https://httpbin.org/post',
             $payload
         );
-        
+
         $this->assertIsArray($response);
         // Сүлжээний алдаа гарч болзошгүй тул алдаа байвал skip хийх
         if (isset($response['error'])) {
@@ -78,7 +78,7 @@ class JSONClientTest extends TestCase
             'https://httpbin.org/put',
             $payload
         );
-        
+
         $this->assertIsArray($response);
         // Сүлжээний алдаа гарч болзошгүй тул алдаа байвал skip хийх
         if (isset($response['error'])) {
@@ -97,7 +97,7 @@ class JSONClientTest extends TestCase
             'https://httpbin.org/delete',
             $payload
         );
-        
+
         $this->assertIsArray($response);
         // Сүлжээний алдаа гарч болзошгүй тул алдаа байвал skip хийх
         if (isset($response['error'])) {
@@ -114,13 +114,13 @@ class JSONClientTest extends TestCase
             'X-Custom-Header' => 'test-value',
             'Authorization' => 'Bearer token123'
         ];
-        
+
         $response = $this->client->get(
             'https://httpbin.org/headers',
             [],
             $headers
         );
-        
+
         $this->assertIsArray($response);
         // Сүлжээний алдаа гарч болзошгүй тул алдаа байвал skip хийх
         if (isset($response['error'])) {
@@ -135,7 +135,7 @@ class JSONClientTest extends TestCase
     public function testRequestWithEmptyPayload(): void
     {
         $response = $this->client->get('https://httpbin.org/get', []);
-        
+
         $this->assertIsArray($response);
         // Сүлжээний алдаа гарч болзошгүй тул алдаа байвал skip хийх
         if (isset($response['error'])) {
@@ -152,7 +152,7 @@ class JSONClientTest extends TestCase
             'https://invalid-domain-that-does-not-exist-12345.com',
             []
         );
-        
+
         $this->assertIsArray($response);
         $this->assertArrayHasKey('error', $response);
         $this->assertArrayHasKey('code', $response['error']);

@@ -37,10 +37,10 @@ class CurlClientTest extends TestCase
     {
         try {
             $response = $this->client->request('https://httpbin.org/get', 'GET');
-            
+
             $this->assertIsString($response);
             $this->assertNotEmpty($response);
-            
+
             $data = \json_decode($response, true);
             if ($data === null) {
                 $this->markTestSkipped('Сүлжээний алдаа эсвэл httpbin.org хандалтгүй байна');
@@ -64,7 +64,7 @@ class CurlClientTest extends TestCase
                 'POST',
                 $testData
             );
-            
+
             $this->assertIsString($response);
             $data = \json_decode($response, true);
             if ($data === null) {
@@ -89,7 +89,7 @@ class CurlClientTest extends TestCase
                 'PUT',
                 $testData
             );
-            
+
             $this->assertIsString($response);
             $data = \json_decode($response, true);
             if ($data === null) {
@@ -111,7 +111,7 @@ class CurlClientTest extends TestCase
                 'https://httpbin.org/delete',
                 'DELETE'
             );
-            
+
             $this->assertIsString($response);
             $data = \json_decode($response, true);
             if ($data === null) {
@@ -132,14 +132,14 @@ class CurlClientTest extends TestCase
             \CURLOPT_TIMEOUT => 10,
             \CURLOPT_HTTPHEADER => ['Accept: application/json']
         ];
-        
+
         $response = $this->client->request(
             'https://httpbin.org/get',
             'GET',
             '',
             $options
         );
-        
+
         $this->assertIsString($response);
         $this->assertNotEmpty($response);
     }
@@ -150,7 +150,7 @@ class CurlClientTest extends TestCase
     public function testRequestWithInvalidUrl(): void
     {
         $this->expectException(\Exception::class);
-        
+
         $this->client->request('https://invalid-domain-that-does-not-exist-12345.com', 'GET');
     }
 
@@ -164,7 +164,7 @@ class CurlClientTest extends TestCase
             'POST',
             ''
         );
-        
+
         $this->assertIsString($response);
         $this->assertNotEmpty($response);
     }

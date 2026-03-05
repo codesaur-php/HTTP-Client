@@ -39,10 +39,10 @@ class CurlClientIntegrationTest extends TestCase
     {
         try {
             $response = $this->client->request('https://httpbin.org/get?test=integration', 'GET');
-            
+
             $this->assertIsString($response);
             $this->assertNotEmpty($response);
-            
+
             $data = \json_decode($response, true);
             $this->assertIsArray($data);
             $this->assertArrayHasKey('url', $data);
@@ -67,7 +67,7 @@ class CurlClientIntegrationTest extends TestCase
                     \CURLOPT_HTTPHEADER => ['Content-Type: application/json']
                 ]
             );
-            
+
             $this->assertIsString($response);
             $data = \json_decode($response, true);
             $this->assertIsArray($data);
@@ -93,7 +93,7 @@ class CurlClientIntegrationTest extends TestCase
                     \CURLOPT_HTTPHEADER => ['Content-Type: application/json']
                 ]
             );
-            
+
             $this->assertIsString($response);
             $data = \json_decode($response, true);
             $this->assertIsArray($data);
@@ -110,7 +110,7 @@ class CurlClientIntegrationTest extends TestCase
     {
         try {
             $response = $this->client->request('https://httpbin.org/delete', 'DELETE');
-            
+
             $this->assertIsString($response);
             $data = \json_decode($response, true);
             $this->assertIsArray($data);
@@ -132,14 +132,14 @@ class CurlClientIntegrationTest extends TestCase
                     'User-Agent: PHPUnit-Integration-Test'
                 ]
             ];
-            
+
             $response = $this->client->request(
                 'https://httpbin.org/headers',
                 'GET',
                 '',
                 $options
             );
-            
+
             $this->assertIsString($response);
             $data = \json_decode($response, true);
             $this->assertIsArray($data);
@@ -160,21 +160,21 @@ class CurlClientIntegrationTest extends TestCase
                 \CURLOPT_TIMEOUT => 5,
                 \CURLOPT_CONNECTTIMEOUT => 3
             ];
-            
+
             $startTime = \microtime(true);
             $response = $this->client->request('https://httpbin.org/delay/2', 'GET', '', $options);
             $endTime = \microtime(true);
-            
+
             $this->assertIsString($response);
             // Timeout-оос илүү удаан ажиллах ёсгүй
             $this->assertLessThan(6, $endTime - $startTime);
         } catch (\Exception $e) {
             // Timeout алдаа гарч болно (илүү уян хатан шалгалт)
             $errorMessage = \strtolower($e->getMessage());
-            $isTimeoutError = \str_contains($errorMessage, 'timeout') 
+            $isTimeoutError = \str_contains($errorMessage, 'timeout')
                 || \str_contains($errorMessage, 'timed out')
                 || \str_contains($errorMessage, 'operation timed');
-            
+
             $this->assertTrue(
                 $isTimeoutError,
                 'Expected timeout error but got: ' . $e->getMessage()
@@ -193,12 +193,12 @@ class CurlClientIntegrationTest extends TestCase
                 'https://httpbin.org/get?param=1',
                 'https://httpbin.org/get?param=2'
             ];
-            
+
             $responses = [];
             foreach ($urls as $url) {
                 $responses[] = $this->client->request($url, 'GET');
             }
-            
+
             $this->assertCount(3, $responses);
             foreach ($responses as $response) {
                 $this->assertIsString($response);
