@@ -12,9 +12,9 @@ namespace codesaur\Http\Client;
  * Онцлогууд:
  *  - To / Cc / Bcc хүлээн авагчид удирдах
  *  - Элгэн (inline) болон олон төрлийн хавсралт дэмжих:
- *        - file path → addFileAttachment()
- *        - URL → addUrlAttachment()
- *        - raw content → addContentAttachment()
+ *        - file path -> addFileAttachment()
+ *        - URL -> addUrlAttachment()
+ *        - raw content -> addContentAttachment()
  *  - HTML болон plaintext имэйл илгээх
  *  - UTF-8 encoded header & filename бүрэн дэмжлэг
  *  - MIME multipart имэйл автоматаар үүсгэнэ

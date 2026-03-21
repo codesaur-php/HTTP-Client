@@ -6,9 +6,10 @@ HTTP хүсэлт илгээх болон MIME имэйл боловсруула
 
 ## Онцлох боломжууд
 
-- **CurlClient** - cURL дээр суурилсан уян хатан HTTP клиент  
-- **JSONClient** - JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой  
-- **Mail** - HTML + Text + олон хавсралттай MIME имэйл илгээгч  
+- **CurlClient** - cURL дээр суурилсан уян хатан HTTP клиент
+- **JSONClient** - JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой
+- **Response** - HTTP хариуг обьект хэлбэрээр илэрхийлэх (status code, headers, body)
+- **Mail** - HTML + Text + олон хавсралттай MIME имэйл илгээгч
 - UTF-8 бүрэн дэмжлэг (нэрс, файлын нэр, гарчиг г.м.)  
 - Хөнгөн, хурдан, ямар ч фрэймворк дээр эсвэл дангаар ашиглаж болно  
 - Зөвхөн `ext-curl`, `ext-json` байхад л болно  
@@ -38,6 +39,59 @@ $response = $curl->request(
 echo $response;
 ```
 
+### Response обьект
+
+```php
+use codesaur\Http\Client\CurlClient;
+
+$curl = new CurlClient();
+
+// send() нь Response обьект буцаана
+$response = $curl->send('https://httpbin.org/get');
+
+echo $response->statusCode;    // 200
+echo $response->body;          // хариуны бие
+print_r($response->headers);   // хариуны headers
+print_r($response->json());    // JSON массив
+
+$response->isOk();    // true (2xx статус код)
+$response->isError(); // false (4xx/5xx биш)
+$response->getHeader('Content-Type'); // "application/json"
+```
+
+### Файл upload
+
+```php
+$response = $curl->upload(
+    'https://httpbin.org/post',
+    '/path/to/file.pdf',
+    'document',
+    ['description' => 'Миний файл']
+);
+```
+
+### Дахин оролдох (Retry)
+
+```php
+$response = $curl->sendWithRetry(
+    'https://api.example.com/data',
+    'GET',
+    '',
+    [],
+    3,    // дахин оролдох тоо
+    500   // эхний хүлээх хугацаа (ms)
+);
+```
+
+### Debug горим
+
+```php
+$curl->enableDebug(true);
+$curl->send('https://httpbin.org/get');
+print_r($curl->getDebugLog());
+$curl->clearDebugLog();
+```
+
 ---
 
 # 2. JSONClient - JSON API-тэй ажиллах
@@ -49,6 +103,15 @@ echo $response;
 ```bash
 # .env файл эсвэл environment variable
 CODESAUR_APP_ENV=development  # эсвэл production
+```
+
+```php
+// Base URL ашиглах
+$client = new JSONClient('https://api.example.com/v1');
+$response = $client->get('/users'); // https://api.example.com/v1/users
+
+// Base URL-гүй (шууд URL)
+$client = new JSONClient();
 ```
 
 ### GET хүсэлт
@@ -75,6 +138,15 @@ $response = $client->post(
 );
 
 echo $response['json']['test']; // codesaur
+```
+
+### PATCH хүсэлт
+
+```php
+$response = $client->patch(
+    'https://httpbin.org/patch',
+    ['status' => 'active']
+);
 ```
 
 ### Алдаа буцаах бүтэц
@@ -146,6 +218,7 @@ composer test:coverage
 ### Тестүүдийн мэдээлэл
 
 - **Unit Tests**: CurlClient, JSONClient, Mail классуудын тест
+- **ResponseTest**: Response классын тест (statusCode, headers, body, json, isOk, isError)
 - **Integration Tests**: Бодит API-тай ажиллах integration тестүүд
 - **EndToEndTest**: Бүх компонентуудыг хамтдаа ашиглах end-to-end тест
 

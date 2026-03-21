@@ -6,9 +6,10 @@ A lightweight, object-oriented HTTP client component for sending HTTP requests a
 
 ## Key Features
 
-- **CurlClient** - Flexible HTTP client based on cURL  
-- **JSONClient** - Convenient for working with REST APIs with JSON data  
-- **Mail** - MIME email sender with HTML + Text + multiple attachments  
+- **CurlClient** - Flexible HTTP client based on cURL
+- **JSONClient** - Convenient for working with REST APIs with JSON data
+- **Response** - HTTP response object with status code, headers, and body
+- **Mail** - MIME email sender with HTML + Text + multiple attachments
 - Full UTF-8 support (names, file names, headers, etc.)  
 - Lightweight, fast, can be used on any framework or standalone  
 - Only requires `ext-curl` and `ext-json`  
@@ -38,6 +39,59 @@ $response = $curl->request(
 echo $response;
 ```
 
+### Response Object
+
+```php
+use codesaur\Http\Client\CurlClient;
+
+$curl = new CurlClient();
+
+// send() returns a Response object
+$response = $curl->send('https://httpbin.org/get');
+
+echo $response->statusCode;    // 200
+echo $response->body;          // raw response body
+print_r($response->headers);   // response headers array
+print_r($response->json());    // decoded JSON array
+
+$response->isOk();    // true (2xx status code)
+$response->isError(); // false (not 4xx/5xx)
+$response->getHeader('Content-Type'); // "application/json"
+```
+
+### File Upload
+
+```php
+$response = $curl->upload(
+    'https://httpbin.org/post',
+    '/path/to/file.pdf',
+    'document',
+    ['description' => 'My file']
+);
+```
+
+### Retry with Exponential Backoff
+
+```php
+$response = $curl->sendWithRetry(
+    'https://api.example.com/data',
+    'GET',
+    '',
+    [],
+    3,    // retries
+    500   // initial delay in ms
+);
+```
+
+### Debug Mode
+
+```php
+$curl->enableDebug(true);
+$curl->send('https://httpbin.org/get');
+print_r($curl->getDebugLog());
+$curl->clearDebugLog();
+```
+
 ---
 
 # 2. JSONClient - Working with JSON APIs
@@ -49,6 +103,15 @@ echo $response;
 ```bash
 # .env file or environment variable
 CODESAUR_APP_ENV=development  # or production
+```
+
+```php
+// With base URL
+$client = new JSONClient('https://api.example.com/v1');
+$response = $client->get('/users'); // https://api.example.com/v1/users
+
+// Without base URL (direct URLs)
+$client = new JSONClient();
 ```
 
 ### GET Request
@@ -75,6 +138,15 @@ $response = $client->post(
 );
 
 echo $response['json']['test']; // codesaur
+```
+
+### PATCH Request
+
+```php
+$response = $client->patch(
+    'https://httpbin.org/patch',
+    ['status' => 'active']
+);
 ```
 
 ### Error Response Structure
@@ -146,6 +218,7 @@ composer test:coverage
 ### Test Information
 
 - **Unit Tests**: Tests for CurlClient, JSONClient, Mail classes
+- **ResponseTest**: Tests for Response class (statusCode, headers, body, json, isOk, isError)
 - **Integration Tests**: Integration tests working with real APIs
 - **EndToEndTest**: End-to-end test using all components together
 

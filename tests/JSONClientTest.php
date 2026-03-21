@@ -10,8 +10,9 @@ use codesaur\Http\Client\JSONClient;
  * JSONClient классын unit тест.
  *
  * Энэ тест нь JSONClient классын функцүүдийг шалгана:
- * - GET, POST, PUT, DELETE хүсэлтүүд
+ * - GET, POST, PUT, PATCH, DELETE хүсэлтүүд
  * - JSON encode/decode
+ * - Base URL тохиргоо
  * - Алдааны боловсруулалт
  */
 class JSONClientTest extends TestCase
@@ -85,6 +86,25 @@ class JSONClientTest extends TestCase
             $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
         }
         $this->assertArrayHasKey('json', $response);
+    }
+
+    /**
+     * PATCH хүсэлт илгээх тест.
+     */
+    public function testPatchRequest(): void
+    {
+        $payload = ['status' => 'patched'];
+        $response = $this->client->patch(
+            'https://httpbin.org/patch',
+            $payload
+        );
+
+        $this->assertIsArray($response);
+        if (isset($response['error'])) {
+            $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
+        }
+        $this->assertArrayHasKey('json', $response);
+        $this->assertEquals('patched', $response['json']['status']);
     }
 
     /**
@@ -235,5 +255,82 @@ class JSONClientTest extends TestCase
         }
         $this->assertArrayHasKey('json', $response);
         $this->assertEquals($payload, $response['json']);
+    }
+
+    // --- Base URL тестүүд ---
+
+    /**
+     * Base URL-гүй JSONClient үүсгэх тест.
+     */
+    public function testConstructorWithoutBaseUrl(): void
+    {
+        $client = new JSONClient();
+        $this->assertEquals('', $client->getBaseUrl());
+    }
+
+    /**
+     * Base URL-тэй JSONClient үүсгэх тест.
+     */
+    public function testConstructorWithBaseUrl(): void
+    {
+        $client = new JSONClient('https://httpbin.org');
+        $this->assertEquals('https://httpbin.org', $client->getBaseUrl());
+    }
+
+    /**
+     * Base URL-ийн trailing slash арилгах тест.
+     */
+    public function testConstructorTrimsTrailingSlash(): void
+    {
+        $client = new JSONClient('https://httpbin.org/');
+        $this->assertEquals('https://httpbin.org', $client->getBaseUrl());
+    }
+
+    /**
+     * Base URL ашиглан хүсэлт илгээх тест.
+     */
+    public function testRequestWithBaseUrl(): void
+    {
+        $client = new JSONClient('https://httpbin.org');
+        $response = $client->get('/get', ['source' => 'baseurl']);
+
+        $this->assertIsArray($response);
+        if (isset($response['error'])) {
+            $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
+        }
+        $this->assertArrayHasKey('args', $response);
+        $this->assertEquals('baseurl', $response['args']['source']);
+    }
+
+    /**
+     * Base URL байхад бүтэн URL өгвөл суурь URL-г алгасах тест.
+     */
+    public function testFullUrlOverridesBaseUrl(): void
+    {
+        $client = new JSONClient('https://example.com');
+        $response = $client->get('https://httpbin.org/get', ['test' => 'full']);
+
+        $this->assertIsArray($response);
+        if (isset($response['error'])) {
+            $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
+        }
+        $this->assertArrayHasKey('args', $response);
+        $this->assertEquals('full', $response['args']['test']);
+    }
+
+    /**
+     * PATCH хүсэлт хоосон payload-тэй илгээх тест.
+     */
+    public function testPatchRequestWithEmptyPayload(): void
+    {
+        $response = $this->client->patch(
+            'https://httpbin.org/patch',
+            []
+        );
+
+        $this->assertIsArray($response);
+        if (isset($response['error'])) {
+            $this->markTestSkipped('Сүлжээний алдаа: ' . $response['error']['message']);
+        }
     }
 }

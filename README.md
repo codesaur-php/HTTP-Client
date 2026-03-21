@@ -19,10 +19,11 @@ HTTP хүсэлт илгээх болон MIME имэйл боловсруула
 `codesaur/http-client` нь **codesaur ecosystem**-ийн нэг хэсэг бөгөөд хөнгөн жинтэй,
 фрэймворкоос үл хамааран standalone байдлаар ашиглаж болох PHP HTTP клиент компонент юм.
 
-Багц нь дараах 3 үндсэн class-аас бүрдэнэ:
+Багц нь дараах 4 үндсэн class-аас бүрдэнэ:
 
-- **CurlClient** - cURL дээр суурилсан уян хатан HTTP клиент  
-- **JSONClient** - JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой  
+- **CurlClient** - cURL дээр суурилсан уян хатан HTTP клиент
+- **JSONClient** - JSON өгөгдөлтэй REST API-тэй ажиллахад тохиромжтой
+- **Response** - HTTP хариуг обьект хэлбэрээр илэрхийлэх (status code, headers, body)
 - **Mail** - HTML + Text + олон хавсралттай MIME имэйл илгээгч  
 
 ### Онцлох боломжууд
@@ -43,10 +44,11 @@ HTTP хүсэлт илгээх болон MIME имэйл боловсруула
 
 `codesaur/http-client` is part of the **codesaur ecosystem** and is a lightweight PHP HTTP client component that can be used standalone, independent of any framework.
 
-The package consists of the following 3 core classes:
+The package consists of the following 4 core classes:
 
-- **CurlClient** - flexible HTTP client based on cURL  
-- **JSONClient** - convenient for working with REST APIs with JSON data  
+- **CurlClient** - flexible HTTP client based on cURL
+- **JSONClient** - convenient for working with REST APIs with JSON data
+- **Response** - HTTP response object with status code, headers, and body
 - **Mail** - MIME email sender with HTML + Text + multiple attachments  
 
 ### Key Features
@@ -96,6 +98,23 @@ $response = $curl->request(
     'GET'
 );
 
+// Response обьект авах / Get Response object
+$res = $curl->send('https://httpbin.org/get');
+echo $res->statusCode; // 200
+echo $res->getHeader('Content-Type'); // application/json
+print_r($res->json()); // decoded JSON array
+
+// Файл upload хийх / Upload file
+$res = $curl->upload('https://httpbin.org/post', '/path/to/file.pdf');
+
+// Дахин оролдох / Retry on failure
+$res = $curl->sendWithRetry('https://httpbin.org/get', retries: 3);
+
+// Debug горим / Debug mode
+$curl->enableDebug(true);
+$curl->send('https://httpbin.org/get');
+print_r($curl->getDebugLog());
+
 // Хариуг хэвлэх / Print response
 echo $response;
 ```
@@ -127,6 +146,16 @@ $response = $client->post(
     ['data' => 'value'],
     ['Authorization' => 'Bearer token'],
     [CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1]
+);
+
+// Base URL ашиглах / Use Base URL
+$api = new JSONClient('https://api.example.com/v1');
+$users = $api->get('/users');
+
+// PATCH хүсэлт / PATCH request (partial update)
+$response = $client->patch(
+    'https://httpbin.org/patch',
+    ['status' => 'active']
 );
 
 // Хариуг хэвлэх / Print response

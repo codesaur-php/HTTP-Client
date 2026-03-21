@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [2.1.0] - 2026-03-21
+[2.1.0]: https://github.com/codesaur-php/HTTP-Client/compare/v2.0.4...v2.1.0
+
+### Added
+- **Response class** (`src/Response.php`):
+  - New class to represent HTTP responses as objects
+  - `statusCode`, `headers`, `body` readonly properties
+  - `json()` - decode response body as JSON array
+  - `isOk()` - check if status code is 2xx
+  - `isError()` - check if status code is 4xx/5xx
+  - `getHeader()` - case-insensitive header lookup
+- **CurlClient new methods**:
+  - `send()` - same as `request()` but returns a Response object (status code, headers, body)
+  - `sendWithRetry()` - automatically retry failed requests with exponential backoff (retries 5xx server errors, does not retry 4xx client errors)
+  - `upload()` - file upload via CURLFile as multipart/form-data, with additional form field support
+  - `enableDebug()` / `getDebugLog()` / `clearDebugLog()` - enable debug mode to log detailed request/response information
+- **JSONClient new methods**:
+  - `patch()` - send JSON PATCH request (partial update)
+  - `__construct($baseUrl)` - set base URL, automatically prepended to all request URIs
+  - `getBaseUrl()` - get the current base URL
+  - Full URLs (http/https) automatically bypass the base URL
+- **New tests**:
+  - `ResponseTest.php` - 11 tests (constructor, json, isOk, isError, getHeader, readonly)
+  - `CurlClientTest.php` - 15 new tests added (send, debug, retry, upload)
+  - `JSONClientTest.php` - 7 new tests added (patch, baseUrl)
+
+### Changed
+- `CurlClient::request()` now internally delegates to `send()` (public API unchanged, backward compatible)
+- `CurlClient::send()` accepts `string|array` data (array for file upload support)
+
+---
+
 ## [2.0.4] - 2026-03-05
 [2.0.4]: https://github.com/codesaur-php/HTTP-Client/compare/v2.0.3...v2.0.4
 

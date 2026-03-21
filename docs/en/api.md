@@ -16,13 +16,95 @@ codesaur\Http\Client
 
 ## Classes
 
+### 0. Response
+
+HTTP response object with status code, headers, and body.
+
+#### Description
+
+This class represents an HTTP response returned by CurlClient's `send()` method. It provides readonly access to the status code, headers, and body of the response.
+
+#### Constructor
+
+**Signature:**
+```php
+public function __construct(
+    public readonly int $statusCode,
+    public readonly array $headers,
+    public readonly string $body
+)
+```
+
+**Parameters:**
+- `$statusCode` (int) - HTTP status code (200, 404, 500, etc.)
+- `$headers` (array<string, string>) - Response HTTP headers
+- `$body` (string) - Response body
+
+#### Properties (readonly)
+
+- `$statusCode` (int) - HTTP status code
+- `$headers` (array) - Response headers
+- `$body` (string) - Response body
+
+#### Methods
+
+##### `json()`
+Decode response body as JSON array.
+
+**Signature:** `public function json(): ?array`
+**Returns:** Decoded array, or null if body is not valid JSON.
+
+##### `isOk()`
+Check if status code is 2xx (success).
+
+**Signature:** `public function isOk(): bool`
+**Returns:** true if status code is between 200-299.
+
+##### `isError()`
+Check if status code is 4xx or 5xx (error).
+
+**Signature:** `public function isError(): bool`
+**Returns:** true if status code is 400 or above.
+
+##### `getHeader()`
+Get header value by name (case-insensitive).
+
+**Signature:** `public function getHeader(string $name, ?string $default = null): ?string`
+**Parameters:**
+- `$name` (string) - Header name (e.g., 'Content-Type')
+- `$default` (?string) - Default value if header not found
+
+**Returns:** Header value or default value.
+
+**Example:**
+```php
+use codesaur\Http\Client\CurlClient;
+
+$curl = new CurlClient();
+$response = $curl->send('https://httpbin.org/get');
+
+echo $response->statusCode;  // 200
+echo $response->body;        // raw body
+print_r($response->json());  // decoded JSON
+echo $response->getHeader('Content-Type'); // "application/json"
+
+if ($response->isOk()) {
+    // Success
+}
+if ($response->isError()) {
+    // Error
+}
+```
+
+---
+
 ### 1. CurlClient
 
 Lightweight cURL client for sending HTTP requests.
 
 #### Description
 
-This class sends HTTP requests to any desired URL using any HTTP method (`GET`, `POST`, `PUT`, `DELETE`, etc.) and returns the server's response as text.
+This class sends HTTP requests to any desired URL using any HTTP method (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`, etc.) and returns the server's response as text.
 
 #### Methods
 
@@ -76,6 +158,117 @@ $response = $curl->request(
 );
 ```
 
+##### `send()`
+
+Same as `request()` but returns a `Response` object. Accepts string or array data (array for file upload as multipart/form-data).
+
+**Signature:**
+```php
+public function send(
+    string $uri,
+    string $method = 'GET',
+    string|array $data = '',
+    array $options = []
+): Response
+```
+
+**Parameters:**
+- `$uri` (string) - URL or endpoint to send the request to
+- `$method` (string) - HTTP method to use (default - `GET`)
+- `$data` (string|array) - Data to send with the request. String for raw data, array for multipart/form-data file upload
+- `$options` (array) - Additional cURL configuration options
+
+**Returns:**
+- `Response` - Response object with `statusCode`, `headers`, and `body` properties
+
+**Throws:**
+- `\Exception` - Throws `Exception` if an error occurs during cURL execution
+
+##### `sendWithRetry()`
+
+Automatically retries failed requests with exponential backoff. Retries 5xx server errors, does not retry 4xx client errors.
+
+**Signature:**
+```php
+public function sendWithRetry(
+    string $uri,
+    string $method = 'GET',
+    string|array $data = '',
+    array $options = [],
+    int $retries = 3,
+    int $delayMs = 500
+): Response
+```
+
+**Parameters:**
+- `$uri` (string) - URL or endpoint to send the request to
+- `$method` (string) - HTTP method to use (default - `GET`)
+- `$data` (string|array) - Data to send with the request
+- `$options` (array) - Additional cURL configuration options
+- `$retries` (int) - Maximum number of retry attempts (default - 3)
+- `$delayMs` (int) - Initial delay in milliseconds between retries (default - 500)
+
+**Returns:**
+- `Response` - Response object
+
+##### `upload()`
+
+Uploads a file via CURLFile as multipart/form-data.
+
+**Signature:**
+```php
+public function upload(
+    string $uri,
+    string $filePath,
+    string $fieldName = 'file',
+    array $fields = [],
+    array $options = []
+): Response
+```
+
+**Parameters:**
+- `$uri` (string) - URL to upload the file to
+- `$filePath` (string) - Path to the file to upload
+- `$fieldName` (string) - Form field name for the file (default - `file`)
+- `$fields` (array) - Additional form fields to include
+- `$options` (array) - Additional cURL configuration options
+
+**Returns:**
+- `Response` - Response object
+
+**Throws:**
+- `\Exception` - If file not found
+
+##### `enableDebug()`
+
+Enable/disable debug mode.
+
+**Signature:** `public function enableDebug(bool $enable = true): static`
+
+**Parameters:**
+- `$enable` (bool) - Whether to enable debug mode (default - `true`)
+
+**Returns:**
+- `static` - Returns self for fluent interface
+
+##### `getDebugLog()`
+
+Returns all debug log entries.
+
+**Signature:** `public function getDebugLog(): array`
+
+**Returns:**
+- `array` - All debug log entries
+
+##### `clearDebugLog()`
+
+Clears all debug log entries.
+
+**Signature:** `public function clearDebugLog(): static`
+
+**Returns:**
+- `static` - Returns self for fluent interface
+
 ---
 
 ### 2. JSONClient
@@ -84,7 +277,7 @@ Client for sending JSON-based HTTP requests.
 
 #### Description
 
-This class works on top of CurlClient and easily sends GET, POST, PUT, DELETE requests with JSON payloads, returning the server's response as a PHP array.
+This class works on top of CurlClient and easily sends GET, POST, PUT, PATCH, DELETE requests with JSON payloads, returning the server's response as a PHP array.
 
 In case of errors, instead of throwing an Exception, it returns:
 ```json
@@ -97,7 +290,33 @@ In case of errors, instead of throwing an Exception, it returns:
 ```
 formatted array.
 
+#### Constructor
+
+**Signature:** `public function __construct(string $baseUrl = '')`
+
+Sets base URL. All request URIs will be automatically prepended with this base URL. If a full URL (http/https) is given, the base URL is bypassed.
+
+**Parameters:**
+- `$baseUrl` (string) - Base URL to prepend to all request URIs (default - empty)
+
+**Example:**
+```php
+use codesaur\Http\Client\JSONClient;
+
+$client = new JSONClient('https://api.example.com/v1');
+$client->get('/users'); // requests https://api.example.com/v1/users
+```
+
 #### Methods
+
+##### `getBaseUrl()`
+
+Returns the current base URL.
+
+**Signature:** `public function getBaseUrl(): string`
+
+**Returns:**
+- `string` - The current base URL
 
 ##### `get()`
 
@@ -206,6 +425,32 @@ $response = $client->put(
 );
 ```
 
+##### `patch()`
+
+Send JSON PATCH request. Used for partial updates.
+
+**Signature:**
+```php
+public function patch(string $uri, array $payload, array $headers = [], array $options = []): array
+```
+
+**Parameters:**
+- `$uri` (string) - URL to access
+- `$payload` (array) - Data to send as JSON
+- `$headers` (array) - Additional HTTP headers
+- `$options` (array) - Additional cURL options (e.g., `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
+
+**Returns:**
+- `array` - Server's JSON response
+
+**Example:**
+```php
+$response = $client->patch(
+    'https://httpbin.org/patch',
+    ['name' => 'Partially Updated Name']
+);
+```
+
 ##### `delete()`
 
 Send JSON DELETE request.
@@ -243,7 +488,7 @@ public function request(string $uri, string $method, array $payload, array $head
 
 **Parameters:**
 - `$uri` (string) - URL to send the request to
-- `$method` (string) - HTTP method (GET, POST, PUT, DELETE)
+- `$method` (string) - HTTP method (GET, POST, PUT, PATCH, DELETE)
 - `$payload` (array) - Data to send
 - `$headers` (array) - Additional headers (`key => value`)
 - `$options` (array) - Additional cURL options (e.g., `CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1`)
@@ -759,6 +1004,14 @@ In case of errors, instead of throwing an Exception, it returns an error structu
 3. **MIME Multipart:** Mail class automatically generates MIME multipart emails when attachments are present
 
 4. **Error Handling:** JSONClient returns all errors in a unified 'error' structure, does not throw Exceptions
+
+5. **Response Object:** CurlClient's `send()` method returns a `Response` object with `statusCode`, `headers`, `body` properties and `json()`, `isOk()`, `isError()`, `getHeader()` methods
+
+6. **Retry Mechanism:** `sendWithRetry()` uses exponential backoff (500ms, 1000ms, 2000ms...) and only retries 5xx server errors
+
+7. **File Upload:** `upload()` uses CURLFile for multipart/form-data file uploads
+
+8. **Debug Mode:** Enable with `enableDebug(true)` to log all request/response details
 
 ---
 
