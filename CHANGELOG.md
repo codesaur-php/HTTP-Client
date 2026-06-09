@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ---
 
+## [2.1.1] - 2026-06-09
+[2.1.1]: https://github.com/codesaur-php/HTTP-Client/compare/v2.1.0...v2.1.1
+
+### Changed
+
+- **Private property names no longer use a leading underscore** (PSR-12 compliance)
+  - `Mail`: `$_recipients` -> `$recipients`, `$_attachments` -> `$attachments`
+  - Internal only - all properties are `private`, so the public API is unchanged.
+
+---
+
 ## [2.1.0] - 2026-03-21
 [2.1.0]: https://github.com/codesaur-php/HTTP-Client/compare/v2.0.4...v2.1.0
 

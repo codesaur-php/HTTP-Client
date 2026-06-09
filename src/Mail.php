@@ -26,7 +26,7 @@ class Mail
     /**
      * @var array Хүлээн авагчдын жагсаалт (To, Cc, Bcc)
      */
-    private array $_recipients;
+    private array $recipients;
 
     /**
      * @var string Илгээгчийн имэйл хаяг
@@ -61,7 +61,7 @@ class Mail
     /**
      * @var array Хавсралтын жагсаалт
      */
-    private array $_attachments;
+    private array $attachments;
 
     /**
      * Олон хүлээн авагчийг reset хийж, зөвхөн нэг шинэ recipient оноох.
@@ -77,7 +77,7 @@ class Mail
      */
     public function targetTo(string $email, string $name = '')
     {
-        $this->_recipients = [];
+        $this->recipients = [];
         return $this->addRecipient($email, $name);
     }
 
@@ -158,11 +158,11 @@ class Mail
             throw new \InvalidArgumentException("Invalid email address for a recipient [$email]!");
         }
 
-        if (!isset($this->_recipients) || !\is_array($this->_recipients)) {
-            $this->_recipients = [];
+        if (!isset($this->recipients) || !\is_array($this->recipients)) {
+            $this->recipients = [];
         }
-        if (!isset($this->_recipients[$type]) || !\is_array($this->_recipients[$type])) {
-            $this->_recipients[$type] = [];
+        if (!isset($this->recipients[$type]) || !\is_array($this->recipients[$type])) {
+            $this->recipients[$type] = [];
         }
 
         $entry = ['email' => $email];
@@ -170,7 +170,7 @@ class Mail
             $entry['name'] = $name;
         }
 
-        $this->_recipients[$type][] = $entry;
+        $this->recipients[$type][] = $entry;
     }
 
     /**
@@ -239,12 +239,12 @@ class Mail
      */
     public function getRecipients(string $type): array
     {
-        if (!isset($this->_recipients[$type])
-            || !\is_array($this->_recipients[$type])
+        if (!isset($this->recipients[$type])
+            || !\is_array($this->recipients[$type])
         ) {
             return [];
         }
-        return $this->_recipients[$type];
+        return $this->recipients[$type];
     }
 
     /**
@@ -452,13 +452,13 @@ class Mail
      */
     private function appendAttachment(array $attachment)
     {
-        if (!isset($this->_attachments)
-            || !\is_array($this->_attachments)
+        if (!isset($this->attachments)
+            || !\is_array($this->attachments)
         ) {
             $this->clearAttachments();
         }
 
-        $this->_attachments[] = $attachment;
+        $this->attachments[] = $attachment;
     }
 
     /**
@@ -468,7 +468,7 @@ class Mail
      */
     public function clearAttachments()
     {
-        $this->_attachments = [];
+        $this->attachments = [];
     }
 
     /**
@@ -479,7 +479,7 @@ class Mail
      */
     public function getAttachments(): array
     {
-        return $this->_attachments ?? [];
+        return $this->attachments ?? [];
     }
 
     /**

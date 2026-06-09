@@ -548,14 +548,14 @@ Lightweight email client class for sending MIME standard emails with attachments
 
 #### Properties
 
-- `$_recipients` (private array) - List of recipients (To, Cc, Bcc)
+- `$recipients` (private array) - List of recipients (To, Cc, Bcc)
 - `$from` (protected string) - Sender's email address
 - `$fromName` (protected string) - Sender's name
 - `$replyTo` (protected string) - Reply-to email
 - `$replyToName` (protected string) - Reply-to name
 - `$subject` (protected string) - Email subject
 - `$message` (protected string) - Email message main content
-- `$_attachments` (private array) - List of attachments
+- `$attachments` (private array) - List of attachments
 
 #### Methods
 

@@ -484,14 +484,14 @@ PHP-ийн `mail()` функцийг ашиглан MIME стандарттай,
 
 #### Properties
 
-- `$_recipients` (private array) - Хүлээн авагчдын жагсаалт (To, Cc, Bcc)
+- `$recipients` (private array) - Хүлээн авагчдын жагсаалт (To, Cc, Bcc)
 - `$from` (protected string) - Илгээгчийн имэйл хаяг
 - `$fromName` (protected string) - Илгээгчийн нэр
 - `$replyTo` (protected string) - Хариу илгээх имэйл
 - `$replyToName` (protected string) - Хариу илгээх нэр
 - `$subject` (protected string) - Имэйл гарчиг
 - `$message` (protected string) - Имэйл мессежийн гол агуулга
-- `$_attachments` (private array) - Хавсралтын жагсаалт
+- `$attachments` (private array) - Хавсралтын жагсаалт
 
 #### Methods
 
